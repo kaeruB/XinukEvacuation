@@ -29,7 +29,7 @@ object EvacuationMain extends LazyLogging {
       case EvacuationDirectionCell(_) => Color.BLUE
       case StaircaseCell(_) => Color.BLUE
      // case WallCell(_) => Color.YELLOW
-      case cell: SmellingCell => colorSmell(cell)
+      // case cell: SmellingCell => colorSmell(cell)
       case _ => Color.BLACK
     }
   }

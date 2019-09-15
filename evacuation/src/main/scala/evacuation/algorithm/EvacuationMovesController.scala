@@ -130,21 +130,21 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
 
 //      grid.cells(35)(12) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(false)
-       grid.cells(30)(77) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(false)
-       grid.cells(50)(77) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(false)
+//       grid.cells(30)(77) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(false)
+//       grid.cells(50)(77) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(false)
 //      grid.cells(39)(19) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(false)
 //      grid.cells(41)(19) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(false)
       // floor 1 people
-//      for (_ <- 0 until config.personsNumberFloor1) {
-//        val (randomVertical, randomHorizontal) = getPersonCoordinatesOnGrid(0, 0)
-//        grid.cells(randomVertical)(randomHorizontal) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(false)
-//      }
-//
-//      // floor 2 people
-//      for (_ <- 0 until config.personsNumberFloor2) {
-//        val (randomVertical, randomHorizontal) = getPersonCoordinatesOnGrid(config.floorHorizontalWidth, 0)
-//        grid.cells(randomVertical)(randomHorizontal) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(false)
-//      }
+      for (_ <- 0 until config.personsNumberFloor1) {
+        val (randomVertical, randomHorizontal) = getPersonCoordinatesOnGrid(0, 0)
+        grid.cells(randomVertical)(randomHorizontal) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(false)
+      }
+
+      // floor 2 people
+      for (_ <- 0 until config.personsNumberFloor2) {
+        val (randomVertical, randomHorizontal) = getPersonCoordinatesOnGrid(config.floorHorizontalWidth, 0)
+        grid.cells(randomVertical)(randomHorizontal) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(false)
+      }
     }
 
     createOutsideWalls()
