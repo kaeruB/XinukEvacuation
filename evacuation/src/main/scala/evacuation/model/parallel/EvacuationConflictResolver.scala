@@ -14,14 +14,14 @@ object EvacuationConflictResolver extends ConflictResolver[EvacuationConfig] {
       case  (EmptyCell(currentSmell), EmptyCell(incomingSmell)) =>
         (EmptyCell(currentSmell + incomingSmell), EvacuationMetrics.empty())
 
-      case (PersonCell(currentSmell, reachedCorridor), EmptyCell(incomingSmell)) =>
-        (PersonCell(currentSmell + incomingSmell, reachedCorridor), EvacuationMetrics.empty())
+      case (PersonCell(currentSmell), EmptyCell(incomingSmell)) =>
+        (PersonCell(currentSmell + incomingSmell), EvacuationMetrics.empty())
 
-      case (EmptyCell(incomingSmell), PersonCell(currentSmell, reachedCorridor)) =>
-        (PersonCell(currentSmell + incomingSmell, reachedCorridor), EvacuationMetrics.empty())
+      case (EmptyCell(incomingSmell), PersonCell(currentSmell)) =>
+        (PersonCell(currentSmell + incomingSmell), EvacuationMetrics.empty())
 
-      case (PersonCell(currentSmell, reachedCorridor), another@PersonCell(incomingSmell, incomingReachedCorridor)) =>
-        (PersonCell(currentSmell + incomingSmell, reachedCorridor),  EvacuationMetrics.empty())
+      case (PersonCell(currentSmell), another@PersonCell(incomingSmell)) =>
+        (PersonCell(currentSmell + incomingSmell),  EvacuationMetrics.empty())
 
       case (WallCell(currentSmell), _) =>
         (WallCell(currentSmell), EvacuationMetrics.empty())

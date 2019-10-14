@@ -17,13 +17,5 @@ final case class EvacuationConfig(
                                    personInitialSignal: Signal,
                                    dangerInitialSignal: Signal,
                                    wallInitialSignal: Signal,
-                                   evacuationDirectionInitialSignal: Signal,
-                                   personsNumber: Int,
-                                   personsNumberFloor1: Int,
-                                   personsNumberFloor2: Int,
-                                   floorHorizontalWidth: Int,
-                                   floorVerticalWidth: Int,
-                                   floorNumber: Int,
-                                   intermediateDoorNumber: Int,
-                                   escapeDoorNumber: Int
+                                   evacuationDirectionInitialSignal: Signal
                                  )extends XinukConfig
