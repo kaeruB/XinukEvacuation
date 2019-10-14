@@ -29,6 +29,8 @@ final case class Grid(cells: CellArray) extends AnyVal {
 object Grid {
   type CellArray = Array[Array[GridPart]]
 
+  var id: WorkerId = _
+
   def empty(bufferZone: Set[(Int, Int)], emptyCellFactory: => SmellingCell = EmptyCell.Instance)(implicit config: XinukConfig): Grid = {
     val n = config.gridSize
     val values = Array.tabulate[GridPart](n, n) {

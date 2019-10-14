@@ -11,17 +11,25 @@ object EvacuationConflictResolver extends ConflictResolver[EvacuationConfig] {
 
   override def resolveConflict(current: GridPart, incoming: SmellingCell)(implicit config: EvacuationConfig): (GridPart, EvacuationMetrics) = {
     (current, incoming) match {
+
+      case (PersonCell(currentSmell), EmptyCell(incomingSmell)) =>
+        (PersonCell(currentSmell + incomingSmell), EvacuationMetrics.empty())
+
+      case (EmptyCell(incomingSmell), PersonCell(currentSmell)) =>
+        (PersonCell(currentSmell + incomingSmell), EvacuationMetrics.empty())
+
       case  (EmptyCell(currentSmell), EmptyCell(incomingSmell)) =>
         (EmptyCell(currentSmell + incomingSmell), EvacuationMetrics.empty())
 
-      case (PersonCell(currentSmell, reachedCorridor), EmptyCell(incomingSmell)) =>
-        (PersonCell(currentSmell + incomingSmell, reachedCorridor), EvacuationMetrics.empty())
+      case (EmptyCell(currentSmell), incomingCell) =>
+        (incomingCell.withSmell(incomingCell.smell + currentSmell), EvacuationMetrics.empty())
 
-      case (EmptyCell(incomingSmell), PersonCell(currentSmell, reachedCorridor)) =>
-        (PersonCell(currentSmell + incomingSmell, reachedCorridor), EvacuationMetrics.empty())
+      case (currentCell: SmellingCell, EmptyCell(incomingSmell)) =>
+        (currentCell.withSmell(currentCell.smell + incomingSmell), EvacuationMetrics.empty())
 
-      case (PersonCell(currentSmell, reachedCorridor), another@PersonCell(incomingSmell, incomingReachedCorridor)) =>
-        (PersonCell(currentSmell + incomingSmell, reachedCorridor),  EvacuationMetrics.empty())
+      // TODO
+      case (PersonCell(currentSmell), another@PersonCell(incomingSmell)) =>
+        (PersonCell(currentSmell + incomingSmell),  EvacuationMetrics.empty())
 
       case (WallCell(currentSmell), _) =>
         (WallCell(currentSmell), EvacuationMetrics.empty())

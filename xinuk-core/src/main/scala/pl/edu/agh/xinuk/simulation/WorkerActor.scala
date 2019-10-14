@@ -65,7 +65,7 @@ class WorkerActor[ConfigType <: XinukConfig](
       logger.info(s"${id.value} neighbours: ${neighbours.map(_.position).toList}")
       self ! StartIteration(1)
     case StartIteration(1) =>
-      val (newGrid, newMetrics) = movesController.initialGrid
+      val (newGrid, newMetrics) = movesController.initialGrid(id)
       this.grid = newGrid
       logMetrics(1, newMetrics)
       guiActors.foreach(_ ! GridInfo(1, grid, newMetrics))
@@ -83,7 +83,7 @@ class WorkerActor[ConfigType <: XinukConfig](
     case StartIteration(i) =>
       finished.remove(i - 1)
       logger.debug(s"$id started $i")
-      val (newGrid, newMetrics) = movesController.makeMoves(i, grid)
+      val (newGrid, newMetrics) = movesController.makeMoves(i, grid, id)
       grid = newGrid
       val metrics = newMetrics + conflictResolutionMetrics
       logMetrics(i, metrics)

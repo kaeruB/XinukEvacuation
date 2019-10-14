@@ -16,7 +16,7 @@ final class TorchMovesController(bufferZone: TreeSet[(Int, Int)])(implicit confi
 
   private val random = new Random(System.nanoTime())
 
-  override def initialGrid: (Grid, TorchMetrics) = {
+  override def initialGrid(id: WorkerId): (Grid, TorchMetrics) = {
     val grid = Grid.empty(bufferZone)
     var humanCount = 0L
     var fireCount = 0L
@@ -87,7 +87,7 @@ final class TorchMovesController(bufferZone: TreeSet[(Int, Int)])(implicit confi
       }
   }
 
-  override def makeMoves(iteration: Long, grid: Grid): (Grid, TorchMetrics) = {
+  override def makeMoves(iteration: Long, grid: Grid, id: WorkerId): (Grid, TorchMetrics) = {
     val newGrid = Grid.empty(bufferZone)
 
     var humanCount = 0L

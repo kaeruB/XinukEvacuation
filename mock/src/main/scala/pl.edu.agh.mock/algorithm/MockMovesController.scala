@@ -13,7 +13,7 @@ final class MockMovesController(bufferZone: TreeSet[(Int, Int)])(implicit config
 
   private val random = new Random(System.nanoTime())
 
-  override def initialGrid: (Grid, MockMetrics) = {
+  override def initialGrid(id: WorkerId): (Grid, MockMetrics) = {
     val grid = Grid.empty(bufferZone)
 
     grid.cells(config.gridSize / 4)(config.gridSize / 4) = MockCell.create(config.mockInitialSignal)
@@ -22,7 +22,7 @@ final class MockMovesController(bufferZone: TreeSet[(Int, Int)])(implicit config
     (grid, metrics)
   }
 
-  override def makeMoves(iteration: Long, grid: Grid): (Grid, MockMetrics) = {
+  override def makeMoves(iteration: Long, grid: Grid, id: WorkerId): (Grid, MockMetrics) = {
     val newGrid = Grid.empty(bufferZone)
 
     def copyCells(x: Int, y: Int, cell: GridPart): Unit = {

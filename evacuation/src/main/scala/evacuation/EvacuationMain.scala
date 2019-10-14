@@ -4,7 +4,8 @@ import java.awt.Color
 
 import com.typesafe.scalalogging.LazyLogging
 import evacuation.algorithm.EvacuationMovesController
-import evacuation.model.{DangerCell, EvacuationDirectionCell, PersonCell, StaircaseCell, WallCell}
+import evacuation.config.EvacuationConfig
+import evacuation.model.{BuildingSmellPropagation, DangerCell, EvacuationDirectionCell, PersonCell, StaircaseCell, WallCell}
 import pl.edu.agh.xinuk.Simulation
 import pl.edu.agh.xinuk.model.{DefaultSmellPropagation, Obstacle, SmellingCell}
 import evacuation.model.parallel.EvacuationConflictResolver
@@ -24,24 +25,34 @@ object EvacuationMain extends LazyLogging {
 
   private def cellToColor(cell: SmellingCell): Color = {
     cell match {
-      case PersonCell(_, _) => Color.WHITE
+      case PersonCell(_) => Color.WHITE
       case DangerCell(_) => Color.RED
       case EvacuationDirectionCell(_) => Color.BLUE
       case StaircaseCell(_) => Color.BLUE
      // case WallCell(_) => Color.YELLOW
-      // case cell: SmellingCell => colorSmell(cell)
+      case cell: SmellingCell => colorSmell(cell)
       case _ => Color.BLACK
     }
   }
 
   def main(args: Array[String]): Unit = {
     import pl.edu.agh.xinuk.config.ValueReaders._
-    new Simulation(configPrefix, metricHeaders, EvacuationConflictResolver,
-      DefaultSmellPropagation.calculateSmellAddendsStandard)(new EvacuationMovesController(_)(_),
-    {
-      case cell: SmellingCell => cellToColor(cell)
-      case Obstacle => Color.yellow
-    }
+//    new Simulation(configPrefix, metricHeaders, EvacuationConflictResolver,
+//      DefaultSmellPropagation.calculateSmellAddendsStandard)(new EvacuationMovesController(_)(_),
+//      {
+//        case cell: SmellingCell => cellToColor(cell)
+//        case Obstacle => Color.yellow
+//      }
+//    ).start()
+    new EvacuationSimulation[EvacuationConfig](
+      configPrefix,
+      metricHeaders,
+      EvacuationConflictResolver,
+      BuildingSmellPropagation.calculateSmellAddends)((tuples, evacuationConfig) => new EvacuationMovesController(tuples)(evacuationConfig),
+      {
+        case cell: SmellingCell => cellToColor(cell)
+        case Obstacle => Color.yellow
+      }
     ).start()
   }
 }

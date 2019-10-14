@@ -18,7 +18,7 @@ final class ForminMovesController(bufferZone: TreeSet[(Int, Int)])(implicit conf
 
   private val random = new Random(System.nanoTime())
 
-  override def initialGrid: (Grid, ForminMetrics) = {
+  override def initialGrid(id: WorkerId): (Grid, ForminMetrics) = {
     grid = Grid.empty(bufferZone)
     var foraminiferaCount = 0L
     var algaeCount = 0L
@@ -66,7 +66,7 @@ final class ForminMovesController(bufferZone: TreeSet[(Int, Int)])(implicit conf
       }
   }
 
-  override def makeMoves(iteration: Long, grid: Grid): (Grid, ForminMetrics) = {
+  override def makeMoves(iteration: Long, grid: Grid, id: WorkerId): (Grid, ForminMetrics) = {
     this.grid = grid
     val newGrid = Grid.empty(bufferZone)
 

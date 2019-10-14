@@ -20,7 +20,7 @@ final class FortwistMovesController(bufferZone: TreeSet[(Int, Int)])(implicit co
 
   private val random = new Random(System.nanoTime())
 
-  override def initialGrid: (Grid, FortwistMetrics) = {
+  override def initialGrid(id: WorkerId): (Grid, FortwistMetrics) = {
     grid = Grid.empty(bufferZone, FortwistCell(Cell.emptySignal, Vector.empty, config.algaeStartEnergy))
     var foraminiferaCount = 0L
     var algaeCount = 0.0
@@ -54,7 +54,7 @@ final class FortwistMovesController(bufferZone: TreeSet[(Int, Int)])(implicit co
     (grid, metrics)
   }
 
-  override def makeMoves(iteration: Long, grid: Grid): (Grid, FortwistMetrics) = {
+  override def makeMoves(iteration: Long, grid: Grid, id: WorkerId): (Grid, FortwistMetrics) = {
     this.grid = grid
     val newGrid = Grid.empty(bufferZone, FortwistCell.create())
 
