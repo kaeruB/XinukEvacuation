@@ -1,6 +1,6 @@
 package evacuation.config
 
-import pl.edu.agh.xinuk.config.{GuiType, XinukConfig}
+import pl.edu.agh.xinuk.config.{GuiType, XinukConfigWithBendFactors}
 import pl.edu.agh.xinuk.model.Signal
 
 final case class EvacuationConfig(
@@ -17,5 +17,7 @@ final case class EvacuationConfig(
                                    personInitialSignal: Signal,
                                    dangerInitialSignal: Signal,
                                    wallInitialSignal: Signal,
-                                   evacuationDirectionInitialSignal: Signal
-                                 )extends XinukConfig
+                                   evacuationDirectionInitialSignal: Signal,
+                                   crossBendFactor: Double,
+                                   straightBendFactor: Double
+                                 )extends XinukConfigWithBendFactors

@@ -4,9 +4,11 @@ import java.awt.Color
 
 import com.typesafe.scalalogging.LazyLogging
 import evacuation.algorithm.EvacuationMovesController
+import evacuation.config.EvacuationConfig
 import evacuation.model.{DangerCell, EvacuationDirectionCell, PersonCell, StaircaseCell, WallCell}
+import pl.edu.agh.xinuk.SimulationWithWind
 import pl.edu.agh.xinuk.Simulation
-import pl.edu.agh.xinuk.model.{DefaultSmellPropagation, Obstacle, SmellingCell}
+import pl.edu.agh.xinuk.model.{CurvedSmellPropagation, DefaultSmellPropagation, Obstacle, SmellingCell}
 import evacuation.model.parallel.EvacuationConflictResolver
 
 object EvacuationMain extends LazyLogging {
@@ -27,19 +29,42 @@ object EvacuationMain extends LazyLogging {
       case EvacuationDirectionCell(_) => Color.BLUE
       case StaircaseCell(_) => Color.BLUE
      // case WallCell(_) => Color.YELLOW
-      // case cell: SmellingCell => colorSmell(cell)
+      case cell: SmellingCell => colorSmell(cell)
       case _ => Color.BLACK
     }
   }
 
   def main(args: Array[String]): Unit = {
-    import pl.edu.agh.xinuk.config.ValueReaders._
-    new Simulation(configPrefix, metricHeaders, EvacuationConflictResolver,
-      DefaultSmellPropagation.calculateSmellAddendsStandard)(new EvacuationMovesController(_)(_),
-    {
-      case cell: SmellingCell => cellToColor(cell)
-      case Obstacle => Color.yellow
+
+    def withWind(): Unit = {
+      import pl.edu.agh.xinuk.config.ValueReaders._
+      new SimulationWithWind[EvacuationConfig](
+        configPrefix,
+        metricHeaders,
+        EvacuationConflictResolver,
+        CurvedSmellPropagation.calculateSmellAddends)((tuples, evacuationConfig) => new EvacuationMovesController(tuples)(evacuationConfig),
+        {
+          case cell: SmellingCell => cellToColor(cell)
+          case Obstacle => Color.yellow
+        }
+      ).start()
     }
-    ).start()
+
+    def withoutWind(): Unit = {
+      import pl.edu.agh.xinuk.config.ValueReaders._
+      new Simulation(
+        configPrefix,
+        metricHeaders,
+        EvacuationConflictResolver,
+        DefaultSmellPropagation.calculateSmellAddendsStandard)(new EvacuationMovesController(_)(_),
+        {
+          case cell: SmellingCell => cellToColor(cell)
+          case Obstacle => Color.yellow
+        }
+      ).start()
+    }
+
+    // withoutWind()
+    withWind()
   }
 }
