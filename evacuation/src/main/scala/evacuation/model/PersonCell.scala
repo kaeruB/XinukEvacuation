@@ -24,15 +24,25 @@ object PersonAccessible {
       override def withPerson(): EvacuationDirectionCell = EvacuationDirectionCell(arg.smell)
     }
 
+  def unapply (arg: TeleportationCell)(implicit config: EvacuationConfig): PersonAccessible[TeleportationCell] =
+    new PersonAccessible[TeleportationCell] {
+      override def withPerson(): TeleportationCell = TeleportationCell(arg.id, arg.smell)
+    }
 
   def unapply (arg: BufferCell)(implicit config: EvacuationConfig): PersonAccessible[BufferCell] =
     new PersonAccessible[BufferCell] {
       override def withPerson(): BufferCell = BufferCell(PersonCell(arg.smellWith(config.personInitialSignal)))
     }
 
+//  def unapply (arg: TeleportationCell)(implicit config: EvacuationConfig): PersonAccessible[TeleportationCell] =
+//    new PersonAccessible[TeleportationCell] {
+//      override def withPerson(): TeleportationCell = TeleportationCell(PersonCell(arg.smellWith(config.personInitialSignal)))
+//    }
+
   def unapply(arg: GridPart)(implicit config: EvacuationConfig): Option[PersonAccessible[GridPart]] = arg match {
     case cell: EmptyCell => Some(unapply(cell))
     case cell: EvacuationDirectionCell => Some(unapply(cell))
+    case cell: TeleportationCell => Some(unapply(cell))
     case cell: BufferCell => Some(unapply(cell))
     case _ => None
   }
