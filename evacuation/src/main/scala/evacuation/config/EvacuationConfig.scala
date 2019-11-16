@@ -19,5 +19,7 @@ final case class EvacuationConfig(
                                    wallInitialSignal: Signal,
                                    evacuationDirectionInitialSignal: Signal,
                                    crossBendFactor: Double,
-                                   straightBendFactor: Double
+                                   straightBendFactor: Double,
+                                   peopleNoFloor1: Int,
+                                   peopleNoFloor2: Int
                                  )extends XinukConfigWithBendFactors
