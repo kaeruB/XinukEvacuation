@@ -105,6 +105,24 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     (doors.C, new Point(doors.C.y + 1, doors.C.x - 1), new Point(doors.C.y + 1, doors.C.x)),
     (doors.D, new Point(doors.D.y - 1, doors.D.x + 1), new Point(doors.D.y - 1, doors.D.x))
   )
+  val nearCellsAndDoorsMap: Map[(Int, Int), Point] = Map(
+    (19, 54) -> doors.A,
+    (19, 55) -> doors.A,
+    (19, 56) -> doors.A,
+    (36, 84) -> doors.B,
+    (36, 85) -> doors.B,
+    (36, 86) -> doors.B,
+    (79, 54) -> doors.C,
+    (79, 55) -> doors.C,
+    (79, 56) -> doors.C,
+    (96, 84) -> doors.D,
+    (96, 85) -> doors.D,
+    (96, 86) -> doors.D
+  )
+  val exitsToFloor1: Array[Point] = Array(
+    new Point(config.gridSize - 2, 3),
+    new Point(config.gridSize - 2, 5)
+  )
 
   private def getWallsPoints: List[Point] = {
     var wallsPointsList: List[Point] = List.empty

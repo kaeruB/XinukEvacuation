@@ -105,13 +105,13 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
     def placePeopleOnGrid(): Unit = {
       for (point <- buildingMap.peoplePoints) {
-        newGrid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
+        newGrid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(List.empty, false)
       }
     }
 
     def placePeopleOnGridTest(): Unit = {
-      newGrid.cells(19)(54) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-      newGrid.cells(19)(56) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
+      newGrid.cells(19)(54) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(List.empty, false)
+      newGrid.cells(19)(56) = PersonAccessible.unapply(EmptyCell.Instance).withPerson(List.empty, false)
     }
 
     def simulateEvacuation(): Unit = {
@@ -121,7 +121,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
       } yield (x, y, grid.cells(x)(y))).partition({
         case (_, _, Obstacle) => true
         case (_, _, TeleportationCell(_, _)) => false
-        case (_, _, PersonCell(_)) => true
+        case (_, _, PersonCell(_, _, _)) => true
         case (_, _, _) => false
       })
 
@@ -138,45 +138,102 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
       })
     }
 
-    def movePersonCell(x: Int, y: Int, cell: PersonCell): Unit = {
-      val destinations = calculatePossibleDestinations(cell, x, y, grid)
-      val doorPointWithAssociatedPointOnCorridor: Option[(Point, Point, Point)] =
-        buildingMap.doorsPointsWithAssociatedPointsOnCorridor.find(points => points._1.x == x && points._1.y == y)
+    def movePersonCell(cellY: Int, cellX: Int, cell: PersonCell): Unit = {
+      val cellToMove: PersonCell = getCellWithUpdatedState(cellY, cellX, cell)
 
-      if (doorPointWithAssociatedPointOnCorridor.nonEmpty) {
-        val associatedCellStateOnGrid: GridPart = grid.cells(doorPointWithAssociatedPointOnCorridor.get._3.y)(doorPointWithAssociatedPointOnCorridor.get._3.x)
+      val doorPointWithAssociatedPointOnCorridor: Option[(Point, Point, Point)] =
+        buildingMap.doorsPointsWithAssociatedPointsOnCorridor.find(points => points._1.y == cellY && points._1.x == cellX)
+
+      if (doorPointWithAssociatedPointOnCorridor.nonEmpty) { // try to enter corridor
+        val associatedCellStateOnGrid: GridPart =
+          grid.cells(doorPointWithAssociatedPointOnCorridor.get._3.y)(doorPointWithAssociatedPointOnCorridor.get._3.x)
 
         associatedCellStateOnGrid match {
-          case (cell: PersonCell) => {
-            newGrid.cells(x)(y) = cell
+          case (_: PersonCell) => {
+            // stay
+            newGrid.cells(cellY)(cellX) = cellToMove
           }
-          case (cell: EmptyCell) => {
-            newGrid.cells(doorPointWithAssociatedPointOnCorridor.get._2.y)(doorPointWithAssociatedPointOnCorridor.get._2.x) = cell
+          case (_: EmptyCell) => {
+            // enter corridor
+            if (cellToMove.waitingPeople.nonEmpty) {
+              newGrid.cells(doorPointWithAssociatedPointOnCorridor.get._2.y)(doorPointWithAssociatedPointOnCorridor.get._2.x) =
+                cellToMove.copy(cellToMove.smell, cellToMove.waitingPeople.head.waitingPeople, true)
+              newGrid.cells(cellY)(cellX) =  cellToMove.copy(cellToMove.waitingPeople.head.smell, cellToMove.waitingPeople.drop(1), false)
+            }
+            else {
+              newGrid.cells(doorPointWithAssociatedPointOnCorridor.get._2.y)(doorPointWithAssociatedPointOnCorridor.get._2.x) =
+                cellToMove.copy(cellToMove.smell, cellToMove.waitingPeople, true)
+            }
           }
         }
       }
       else {
-        val destination = selectDestinationCell(destinations, newGrid)
+        val doorDestinationOpt: Option[((Int, Int), Point)] =
+          buildingMap.nearCellsAndDoorsMap.find(
+            el => el._1._1 == cellY && el._1._2 == cellX
+          )
+        if (doorDestinationOpt.nonEmpty) { // try to enter door
 
-        destination match {
-          case Opt((i, j, PersonAccessible(destination))) => {
-            grid.cells(i)(j) match {
-              case TeleportationCell(id, _) => {
-                if (id != -1)
-                  newGrid.cells(buildingMap.teleportationPairs(id).point2.y)(buildingMap.teleportationPairs(id).point2.x) = cell.copy(cell.smell)
+          val currentDoorCellState = newGrid.cells(doorDestinationOpt.get._2.y)(doorDestinationOpt.get._2.x)
+
+          currentDoorCellState match {
+            case PersonCell(smell, waitingPeople, isInCorridor) => {
+              if (waitingPeople.size < 2) { // go to door cell with another person
+                // wait in doors
+                newGrid.cells(doorDestinationOpt.get._2.y)(doorDestinationOpt.get._2.x) =
+                  cellToMove.copy(cellToMove.smell, cellToMove :: cellToMove.waitingPeople, false)
               }
-              case _ => {
-                newGrid.cells(i)(j) = destination.withPerson()
+              else {
+                // don't move
+                newGrid.cells(cellY)(cellX) = cellToMove
               }
             }
-            newGrid.cells(x)(y) = EmptyCell(cell.smell)
+            case _ => {
+              // go to door cell
+              newGrid.cells(doorDestinationOpt.get._2.y)(doorDestinationOpt.get._2.x) = cellToMove
+            }
           }
-          case Opt((i, j, inaccessibleDestination)) =>
-            throw new RuntimeException(s"Person selected inaccessible destination ($i,$j): $inaccessibleDestination")
-          case Opt.Empty =>
-            newGrid.cells(x)(y) = cell.copy(cell.smell)
+        }
+        else { // in corridor or in room
+          val destinations = calculatePossibleDestinations(cellToMove, cellY, cellX, grid)
+          val destination = selectDestinationCell(destinations, newGrid, cellToMove.isInCorridor)
+
+          destination match {
+            case Opt((i, j, PersonAccessible(destination))) => {
+              grid.cells(i)(j) match {
+                case TeleportationCell(id, _) => {
+                  if (id != -1)
+                    newGrid.cells(buildingMap.teleportationPairs(id).point2.y)(buildingMap.teleportationPairs(id).point2.x) = cellToMove
+                }
+                case _ => {
+                  newGrid.cells(i)(j) = destination.withPerson(List.empty, cellToMove.isInCorridor) //cell.waitingPeople.head.waitingPeople
+                }
+              }
+              if (cellToMove == newGrid.cells(cellY)(cellX))
+                newGrid.cells(cellY)(cellX) = EmptyCell(cellToMove.smell)
+            }
+            case Opt((i, j, inaccessibleDestination)) =>
+              inaccessibleDestination match {
+                case PersonCell(smell, waitingPeople, isInCorridor) => {
+                  if (isInCorridor) newGrid.cells(i)(j) = cellToMove
+                  else throw new RuntimeException(s"Person selected inaccessible destination ($i,$j): $inaccessibleDestination")
+                }
+                case _ => {
+                  throw new RuntimeException(s"Person selected inaccessible destination ($i,$j): $inaccessibleDestination")
+                }
+              }
+            case Opt.Empty =>
+              newGrid.cells(cellY)(cellX) = cellToMove
+          }
         }
       }
+    }
+
+    def getCellWithUpdatedState(cellY: Int, cellX: Int, cell: PersonCell): PersonCell = {
+      if (buildingMap.exitsToFloor1.exists(point => point.y == cellY && point.x == cellX))
+        cell.copy(cell.smell, cell.waitingPeople, false)
+      else
+        cell.copy(cell.smell, cell.waitingPeople, cell.isInCorridor)
     }
 
     def calculatePossibleDestinations(cell: PersonCell, x: Int, y: Int, grid: Grid): Iterator[(Int, Int, GridPart)] = {
@@ -193,24 +250,31 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
         }
     }
 
-    def selectDestinationCell(possibleDestinations: Iterator[(Int, Int, GridPart)], newGrid: Grid): commons.Opt[(Int, Int, GridPart)] = {
-      possibleDestinations
-        .map { case (i, j, current) => (i, j, current, newGrid.cells(i)(j)) }
-        .collectFirstOpt {
-          case (i, j, currentCell@PersonAccessible(_), PersonAccessible(_)) =>
-            (i, j, currentCell)
-//          case (i, j, currentCell@PersonAccessible(_), EvacuationDirectionAccessible(_)) =>
-//            (i, j, currentCell)
-          case (i, j, currentCell@PersonAccessible(_), TeleportationAccessible(_)) =>
-            (i, j, currentCell)
-        }
+    def selectDestinationCell(possibleDestinations: Iterator[(Int, Int, GridPart)], newGrid: Grid, isInCorridor: Boolean): commons.Opt[(Int, Int, GridPart)] = {
+      if (!isInCorridor) {
+        possibleDestinations
+          .map { case (i, j, current) => (i, j, current, newGrid.cells(i)(j)) }
+          .collectFirstOpt {
+            case (i, j, currentCell@PersonAccessible(_), PersonAccessible(_)) =>
+              (i, j, currentCell)
+            case (i, j, currentCell@PersonAccessible(_), TeleportationAccessible(_)) =>
+              (i, j, currentCell)
+          }
+      }
+      else {
+        possibleDestinations
+          .map { case (i, j, current) => (i, j, current, newGrid.cells(i)(j)) }
+          .collectFirstOpt {
+            case (i, j, currentCell, _) => (i, j, currentCell)
+          }
+      }
     }
 
     if (iteration < boundaryIterationNo) propagateInitialSmell()
     else if (iteration == boundaryIterationNo) {
       createSmellSnapshot()
-      // placePeopleOnGrid()
-      placePeopleOnGridTest()
+      placePeopleOnGrid()
+      // placePeopleOnGridTest()
     }
     else simulateEvacuation()
 
