@@ -2,16 +2,13 @@ package evacuation.model
 
 import evacuation.config.EvacuationConfig
 import pl.edu.agh.xinuk.model.Cell.SmellArray
-import pl.edu.agh.xinuk.model.{BufferCell, Cell, EmptyCell, GridPart, Signal, SmellingCell}
+import pl.edu.agh.xinuk.model.{BufferCell, EmptyCell, GridPart, SmellingCell}
 
 final case class EvacuationDirectionCell(smell: SmellArray, exit: Boolean)(implicit config: EvacuationConfig) extends SmellingCell {
   override type Self = EvacuationDirectionCell
-  override def withSmell(smell: SmellArray):EvacuationDirectionCell  = copy(smell = smell)
-}
 
-//object EvacuationDirectionCell {
-//  def create(initialSignal: Signal): EvacuationDirectionCell = EvacuationDirectionCell(Array.fill(Cell.Size, Cell.Size)(initialSignal))
-//}
+  override def withSmell(smell: SmellArray): EvacuationDirectionCell = copy(smell = smell)
+}
 
 trait EvacuationDirectionAccessible[+T <: GridPart] {
   def withEvacuationDirection(exit: Boolean): T

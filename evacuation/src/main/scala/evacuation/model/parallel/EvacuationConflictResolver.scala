@@ -1,7 +1,7 @@
 package evacuation.model.parallel
 
 import evacuation.config.EvacuationConfig
-import evacuation.model.{PersonCell, WallCell}
+import evacuation.model.{PersonCell}
 import evacuation.simulation.EvacuationMetrics
 import pl.edu.agh.xinuk.model.{Cell, EmptyCell, GridPart, Obstacle, SmellingCell}
 import pl.edu.agh.xinuk.model.parallel.ConflictResolver
@@ -14,17 +14,14 @@ object EvacuationConflictResolver extends ConflictResolver[EvacuationConfig] {
       case  (EmptyCell(currentSmell), EmptyCell(incomingSmell)) =>
         (EmptyCell(currentSmell + incomingSmell), EvacuationMetrics.empty())
 
-      case (PersonCell(currentSmell, currentWaitingPeopleNo, currentIsInCorridor), EmptyCell(incomingSmell)) =>
-        (PersonCell(currentSmell + incomingSmell, currentWaitingPeopleNo, currentIsInCorridor), EvacuationMetrics.empty())
+      case (PersonCell(currentSmell), EmptyCell(incomingSmell)) =>
+        (PersonCell(currentSmell + incomingSmell), EvacuationMetrics.empty())
 
-      case (EmptyCell(incomingSmell), PersonCell(currentSmell, currentWaitingPeopleNo, currentIsInCorridor)) =>
-        (PersonCell(currentSmell + incomingSmell, currentWaitingPeopleNo, currentIsInCorridor), EvacuationMetrics.empty())
+      case (EmptyCell(incomingSmell), PersonCell(currentSmell)) =>
+        (PersonCell(currentSmell + incomingSmell), EvacuationMetrics.empty())
 
-      case (PersonCell(currentSmell, currentWaitingPeopleNo, currentIsInCorridor), another@PersonCell(incomingSmell, incomingCurrentWaitingPeopleNo, _)) =>
-        (PersonCell(currentSmell + incomingSmell, currentWaitingPeopleNo ++ incomingCurrentWaitingPeopleNo, currentIsInCorridor),  EvacuationMetrics.empty())
-
-      case (WallCell(currentSmell), _) =>
-        (WallCell(currentSmell), EvacuationMetrics.empty())
+      case (PersonCell(currentSmell), another@PersonCell(incomingSmell)) =>
+        (PersonCell(currentSmell + incomingSmell),  EvacuationMetrics.empty())
 
       case (Obstacle, _) =>
         (Obstacle, EvacuationMetrics.empty())

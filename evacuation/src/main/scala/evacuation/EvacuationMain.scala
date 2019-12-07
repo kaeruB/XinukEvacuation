@@ -5,7 +5,7 @@ import java.awt.Color
 import com.typesafe.scalalogging.LazyLogging
 import evacuation.algorithm.EvacuationMovesController
 import evacuation.config.EvacuationConfig
-import evacuation.model.{DangerCell, EvacuationDirectionCell, ExitCell, PersonCell, StaircaseCell, WallCell}
+import evacuation.model.{EvacuationDirectionCell, ExitCell, PersonCell}
 import pl.edu.agh.xinuk.SimulationWithWind
 import pl.edu.agh.xinuk.Simulation
 import pl.edu.agh.xinuk.model.{CurvedSmellPropagation, DefaultSmellPropagation, Obstacle, SmellingCell}
@@ -19,10 +19,6 @@ object EvacuationMain extends LazyLogging {
 
   def colorSmell(cell: SmellingCell): Color = {
     val smellValue = cell.smell.map(_.map(_.value).max).max.toFloat
-//    if (smellValue > 0.3) Color.RED
-//    else if (smellValue > 0.015) Color.PINK
-//    else if (smellValue < 0) Color.BLUE
-//    else Color.BLACK
 
     val brightness = Math.pow(smellValue, 0.1).toFloat
     if (smellValue < 0.00001) {
@@ -46,12 +42,9 @@ object EvacuationMain extends LazyLogging {
 
   private def cellToColor(cell: SmellingCell): Color = {
     cell match {
-      case PersonCell(_, _, _) => Color.WHITE
-      case DangerCell(_) => Color.RED
+      case PersonCell(_) => Color.WHITE
       case EvacuationDirectionCell(_, _) => Color.BLUE
-      case StaircaseCell(_) => Color.BLUE
       case ExitCell(_, _) => Color.BLUE
-     // case WallCell(_) => Color.YELLOW
       case cell: SmellingCell => colorSmell(cell)
       case _ => Color.BLACK
     }

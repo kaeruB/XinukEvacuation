@@ -1,4 +1,4 @@
-package evacuation.model
+package evacuation.model.building
 
 import evacuation.config.EvacuationConfig
 
@@ -32,32 +32,6 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     new PointPair(new Point(80, 50), new Point(95, 50)),
     new PointPair(new Point(20, 90), new Point(35, 90)),
     new PointPair(new Point(80, 90), new Point(95, 90))
-
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
-//    new PointPair(new Point(), new Point()),
   )
 
   private object smellSources {
@@ -74,7 +48,7 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     val D = new Point(95, 85)
   }
 
-  private object floors {
+  private object rectanglesCornersDrawingAvailableSpaceOnFloors {
     val floor1: Array[PointPair] = Array(
       new PointPair(new Point(1,1), new Point(19, 132)),
       new PointPair(new Point(20, 1), new Point(35, 49)),
@@ -98,30 +72,6 @@ final class BuildingMap(implicit config: EvacuationConfig) {
         new PointPair(smellSources.B, new Point(smellSources.D.y, smellSources.A.x)),
         new PointPair(smellSources.C, new Point(config.gridSize - 2, 3)),
         new PointPair(smellSources.D, new Point(config.gridSize - 2, 5))
-  )
-  val doorsPointsWithAssociatedPointsOnCorridor: Array[(Point, Point, Point)] = Array(
-    (doors.A, new Point(doors.A.y + 1, doors.A.x - 1), new Point(doors.A.y + 1, doors.A.x)),
-    (doors.B, new Point(doors.B.y - 1, doors.B.x + 1), new Point(doors.B.y - 1, doors.B.x)),
-    (doors.C, new Point(doors.C.y + 1, doors.C.x - 1), new Point(doors.C.y + 1, doors.C.x)),
-    (doors.D, new Point(doors.D.y - 1, doors.D.x + 1), new Point(doors.D.y - 1, doors.D.x))
-  )
-  val nearCellsAndDoorsMap: Map[(Int, Int), Point] = Map(
-    (19, 54) -> doors.A,
-    (19, 55) -> doors.A,
-    (19, 56) -> doors.A,
-    (36, 84) -> doors.B,
-    (36, 85) -> doors.B,
-    (36, 86) -> doors.B,
-    (79, 54) -> doors.C,
-    (79, 55) -> doors.C,
-    (79, 56) -> doors.C,
-    (96, 84) -> doors.D,
-    (96, 85) -> doors.D,
-    (96, 86) -> doors.D
-  )
-  val exitsToFloor1: Array[Point] = Array(
-    new Point(config.gridSize - 2, 3),
-    new Point(config.gridSize - 2, 5)
   )
   val exits: Array[Point] = Array(
     new Point(132, 132),
@@ -155,7 +105,8 @@ final class BuildingMap(implicit config: EvacuationConfig) {
   }
 
   private def getPeoplePoints: List[Point] = {
-    getPeopleOnFloor(floors.floor1, config.peopleNoFloor1) ++ getPeopleOnFloor(floors.floor2, config.peopleNoFloor2)
+    getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floor1, config.peopleNoFloor1) ++
+      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floor2, config.peopleNoFloor2)
   }
 
   private def getPeopleOnFloor(floorParts: Array[PointPair], noOfPeople: Int): List[Point] = {
