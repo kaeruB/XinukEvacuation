@@ -18,6 +18,7 @@ final case class EvacuationConfig(
                                    dangerInitialSignal: Signal,
                                    wallInitialSignal: Signal,
                                    evacuationDirectionInitialSignal: Signal,
+                                   zeroInitialSignal: Signal,
                                    crossBendFactor: Double,
                                    straightBendFactor: Double,
                                    peopleNoFloor1: Int,

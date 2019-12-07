@@ -23,7 +23,7 @@ object PersonAccessible {
   def unapply (arg: EvacuationDirectionCell)(implicit config: EvacuationConfig): PersonAccessible[EvacuationDirectionCell] =
     new PersonAccessible[EvacuationDirectionCell] {
       override def withPerson(waitingPeople: List[PersonCell], isInCorridor: Boolean): EvacuationDirectionCell =
-        EvacuationDirectionCell(arg.smell)
+        EvacuationDirectionCell(arg.smell, false) // TODO check
     }
 
   def unapply (arg: TeleportationCell)(implicit config: EvacuationConfig): PersonAccessible[TeleportationCell] =
@@ -38,7 +38,13 @@ object PersonAccessible {
         BufferCell(PersonCell(arg.smellWith(config.personInitialSignal), waitingPeople, isInCorridor))
     }
 
-//  def unapply (arg: TeleportationCell)(implicit config: EvacuationConfig): PersonAccessible[TeleportationCell] =
+  def unapply(arg: ExitCell)(implicit config: EvacuationConfig): PersonAccessible[ExitCell] =
+    new PersonAccessible[ExitCell] {
+      override def withPerson(waitingPeople: List[PersonCell], isInCorridor: Boolean): ExitCell =
+        ExitCell(arg.id, arg.smell)
+    }
+
+  //  def unapply (arg: TeleportationCell)(implicit config: EvacuationConfig): PersonAccessible[TeleportationCell] =
 //    new PersonAccessible[TeleportationCell] {
 //      override def withPerson(): TeleportationCell = TeleportationCell(PersonCell(arg.smellWith(config.personInitialSignal)))
 //    }
@@ -47,6 +53,7 @@ object PersonAccessible {
     case cell: EmptyCell => Some(unapply(cell))
     case cell: EvacuationDirectionCell => Some(unapply(cell))
     case cell: TeleportationCell => Some(unapply(cell))
+    case cell: ExitCell => Some(unapply(cell))
     case cell: BufferCell => Some(unapply(cell))
     case _ => None
   }

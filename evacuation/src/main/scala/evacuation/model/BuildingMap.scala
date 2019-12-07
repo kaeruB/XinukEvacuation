@@ -123,6 +123,10 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     new Point(config.gridSize - 2, 3),
     new Point(config.gridSize - 2, 5)
   )
+  val exits: Array[Point] = Array(
+    new Point(132, 132),
+    new Point(130, 132)
+  )
 
   private def getWallsPoints: List[Point] = {
     var wallsPointsList: List[Point] = List.empty

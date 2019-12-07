@@ -5,7 +5,7 @@ import java.awt.Color
 import com.typesafe.scalalogging.LazyLogging
 import evacuation.algorithm.EvacuationMovesController
 import evacuation.config.EvacuationConfig
-import evacuation.model.{DangerCell, EvacuationDirectionCell, PersonCell, StaircaseCell, WallCell}
+import evacuation.model.{DangerCell, EvacuationDirectionCell, ExitCell, PersonCell, StaircaseCell, WallCell}
 import pl.edu.agh.xinuk.SimulationWithWind
 import pl.edu.agh.xinuk.Simulation
 import pl.edu.agh.xinuk.model.{CurvedSmellPropagation, DefaultSmellPropagation, Obstacle, SmellingCell}
@@ -13,7 +13,9 @@ import evacuation.model.parallel.EvacuationConflictResolver
 
 object EvacuationMain extends LazyLogging {
   private val configPrefix = "evacuation"
-  private val metricHeaders = Vector()
+  private val metricHeaders = Vector(
+    "evacuatedCount"
+  )
 
   def colorSmell(cell: SmellingCell): Color = {
     val smellValue = cell.smell.map(_.map(_.value).max).max.toFloat
@@ -44,10 +46,11 @@ object EvacuationMain extends LazyLogging {
 
   private def cellToColor(cell: SmellingCell): Color = {
     cell match {
-      case PersonCell(_) => Color.WHITE
+      case PersonCell(_, _, _) => Color.WHITE
       case DangerCell(_) => Color.RED
-      case EvacuationDirectionCell(_) => Color.BLUE
+      case EvacuationDirectionCell(_, _) => Color.BLUE
       case StaircaseCell(_) => Color.BLUE
+      case ExitCell(_, _) => Color.BLUE
      // case WallCell(_) => Color.YELLOW
       case cell: SmellingCell => colorSmell(cell)
       case _ => Color.BLACK
@@ -62,7 +65,9 @@ object EvacuationMain extends LazyLogging {
         configPrefix,
         metricHeaders,
         EvacuationConflictResolver,
-        CurvedSmellPropagation.calculateSmellAddends)((tuples, evacuationConfig) => new EvacuationMovesController(tuples)(evacuationConfig),
+        CurvedSmellPropagation.calculateSmellAddends
+      )(
+        (tuples, evacuationConfig) => new EvacuationMovesController(tuples)(evacuationConfig),
         {
           case cell: SmellingCell => cellToColor(cell)
           case Obstacle => Color.yellow
@@ -76,7 +81,9 @@ object EvacuationMain extends LazyLogging {
         configPrefix,
         metricHeaders,
         EvacuationConflictResolver,
-        DefaultSmellPropagation.calculateSmellAddendsStandard)(new EvacuationMovesController(_)(_),
+        DefaultSmellPropagation.calculateSmellAddendsStandard
+      )(
+        new EvacuationMovesController(_)(_),
         {
           case cell: SmellingCell => cellToColor(cell)
           case Obstacle => Color.yellow

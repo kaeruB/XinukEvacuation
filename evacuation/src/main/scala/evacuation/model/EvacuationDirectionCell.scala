@@ -4,7 +4,7 @@ import evacuation.config.EvacuationConfig
 import pl.edu.agh.xinuk.model.Cell.SmellArray
 import pl.edu.agh.xinuk.model.{BufferCell, Cell, EmptyCell, GridPart, Signal, SmellingCell}
 
-final case class EvacuationDirectionCell(smell: SmellArray)(implicit config: EvacuationConfig) extends SmellingCell {
+final case class EvacuationDirectionCell(smell: SmellArray, exit: Boolean)(implicit config: EvacuationConfig) extends SmellingCell {
   override type Self = EvacuationDirectionCell
   override def withSmell(smell: SmellArray):EvacuationDirectionCell  = copy(smell = smell)
 }
@@ -14,18 +14,20 @@ final case class EvacuationDirectionCell(smell: SmellArray)(implicit config: Eva
 //}
 
 trait EvacuationDirectionAccessible[+T <: GridPart] {
-  def withEvacuationDirection(): T
+  def withEvacuationDirection(exit: Boolean): T
 }
 
 object EvacuationDirectionAccessible {
   def unapply (arg: EmptyCell)(implicit config: EvacuationConfig): EvacuationDirectionAccessible[EvacuationDirectionCell] =
     new EvacuationDirectionAccessible[EvacuationDirectionCell] {
-      override def withEvacuationDirection(): EvacuationDirectionCell = EvacuationDirectionCell(arg.smellWith(config.evacuationDirectionInitialSignal))
+      override def withEvacuationDirection(exit: Boolean): EvacuationDirectionCell =
+        EvacuationDirectionCell(arg.smellWith(config.evacuationDirectionInitialSignal), exit)
     }
 
   def unapply (arg: BufferCell)(implicit config: EvacuationConfig): EvacuationDirectionAccessible[BufferCell] =
     new EvacuationDirectionAccessible[BufferCell] {
-      override def withEvacuationDirection(): BufferCell = BufferCell(EvacuationDirectionCell(arg.smellWith(config.evacuationDirectionInitialSignal)))
+      override def withEvacuationDirection(exit: Boolean): BufferCell =
+        BufferCell(EvacuationDirectionCell(arg.smellWith(config.evacuationDirectionInitialSignal), exit))
     }
 
   def unapply(arg: GridPart)(implicit config: EvacuationConfig): Option[EvacuationDirectionAccessible[GridPart]] = arg match {
