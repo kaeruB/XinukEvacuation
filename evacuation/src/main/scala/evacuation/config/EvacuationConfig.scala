@@ -18,6 +18,17 @@ final case class EvacuationConfig(
                                    evacuationDirectionInitialSignal: Signal,
                                    crossBendFactor: Double,
                                    straightBendFactor: Double,
-                                   peopleNoFloor1: Int,
-                                   peopleNoFloor2: Int
+                                   peopleNoFloorA: Int,
+                                   peopleNoFloorB: Int,
+                                   peopleNoFloorC: Int,
+                                   peopleNoFloorD: Int,
+                                   peopleNoFloorE: Int,
+                                   peopleNoFloorF: Int,
+                                   peopleNoFloorG: Int,
+                                   peopleNoFloorH: Int,
+                                   peopleNoFloorI: Int,
+                                   peopleNoFloorJ: Int,
+                                   peopleNoFloorK: Int,
+                                   peopleNoFloorL: Int,
+                                   peopleNoFloorM: Int
                                  )extends XinukConfigWithBendFactors
