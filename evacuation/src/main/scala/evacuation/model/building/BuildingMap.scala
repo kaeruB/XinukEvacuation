@@ -1,6 +1,8 @@
 package evacuation.model.building
 
 import evacuation.config.EvacuationConfig
+import evacuation.model.EvacuationDirectionSmellStrength
+import evacuation.model.EvacuationDirectionSmellStrength.EvacuationDirectionSmellStrength
 
 import scala.util.Random
 
@@ -302,13 +304,13 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     val D_b = new Point(26, 243)
 
     val E_a = new Point(52,  21)
-    val E_b = new Point(66,  45)
+    val E_b = new Point(65,  45)
     val F_a = new Point(52,  87)
-    val F_b = new Point(66, 111)
+    val F_b = new Point(65, 111)
     val G_a = new Point(52, 153)
-    val G_b = new Point(66, 177)
+    val G_b = new Point(65, 177)
     val H_a = new Point(52, 219)
-    val H_b = new Point(66, 243)
+    val H_b = new Point(65, 243)
 
     val I_a = new Point(91,   21)
     val I_b = new Point(104,  45)
@@ -495,31 +497,31 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     new PointPair(smellSources.M_b, teleportationDestination.M_b)
   )
 
-  val exits: Array[Point] = Array(
+  val exits: Array[(Point, EvacuationDirectionSmellStrength)] = Array(
     // A
-    new Point(145, 176),
-    new Point(146, 176),
+    (new Point(145, 176), EvacuationDirectionSmellStrength.Weak),
+    (new Point(146, 176), EvacuationDirectionSmellStrength.Strong),
 
     // B
-    new Point(123, 214),
-    new Point(123, 215),
-    new Point(123, 216),
-    new Point(123, 217),
+    (new Point(123, 214), EvacuationDirectionSmellStrength.Weak),
+    (new Point(123, 215), EvacuationDirectionSmellStrength.Weak),
+    (new Point(123, 216), EvacuationDirectionSmellStrength.Weak),
+    (new Point(123, 217), EvacuationDirectionSmellStrength.Strong),
 
     // C
-    new Point(157, 263),
+    (new Point(157, 263), EvacuationDirectionSmellStrength.Weak),
 
     // D
-    new Point(182, 253),
+    (new Point(182, 253), EvacuationDirectionSmellStrength.Weak),
 
     //E
-    new Point(157, 214),
-    new Point(157, 215),
-    new Point(157, 216),
-    new Point(157, 217),
+    (new Point(157, 214), EvacuationDirectionSmellStrength.Strong),
+    (new Point(157, 215), EvacuationDirectionSmellStrength.Weak),
+    (new Point(157, 216), EvacuationDirectionSmellStrength.Weak),
+    (new Point(157, 217), EvacuationDirectionSmellStrength.Weak),
 
     // F
-    new Point(204, 176)
+    (new Point(204, 176), EvacuationDirectionSmellStrength.Strong)
   )
 
   private def getWallsPoints: List[Point] = {
@@ -568,7 +570,7 @@ final class BuildingMap(implicit config: EvacuationConfig) {
   private def getPeopleOnFloor(floorParts: Array[PointPair], noOfPeople: Int): List[Point] = {
     var result: List[Point] = List.empty
 
-    for (_ <- 0 to noOfPeople) {
+    for (_ <- 0 until noOfPeople) {
       val randomFloorPart = floorParts(random.nextInt(4))
 
       val randomPointX = random.nextInt(randomFloorPart.point2.x - randomFloorPart.point1.x + 1) + randomFloorPart.point1.x

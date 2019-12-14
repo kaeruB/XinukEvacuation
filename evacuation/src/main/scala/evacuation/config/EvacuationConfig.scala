@@ -16,6 +16,8 @@ final case class EvacuationConfig(
                                    shardingMod: Int,
                                    personInitialSignal: Signal,
                                    evacuationDirectionInitialSignal: Signal,
+                                   evacuationDirectionInitialSignalMedium: Signal,
+                                   evacuationDirectionInitialSignalWeak: Signal,
                                    crossBendFactor: Double,
                                    straightBendFactor: Double,
                                    peopleNoFloorA: Int,

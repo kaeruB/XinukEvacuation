@@ -43,7 +43,7 @@ object EvacuationMain extends LazyLogging {
   private def cellToColor(cell: SmellingCell): Color = {
     cell match {
       case PersonCell(_) => Color.WHITE
-      case EvacuationDirectionCell(_, _) => Color.BLUE
+      case EvacuationDirectionCell(_, _, _) => Color.BLUE
       case ExitCell(_, _) => Color.BLUE
       case cell: SmellingCell => colorSmell(cell)
       case _ => Color.BLACK

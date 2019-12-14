@@ -4,8 +4,9 @@ import com.avsystem.commons.misc.Opt
 import com.avsystem.commons
 import com.avsystem.commons.SharedExtensions._
 import evacuation.config.EvacuationConfig
+import evacuation.model.EvacuationDirectionSmellStrength.EvacuationDirectionSmellStrength
 import evacuation.model.building.BuildingMap
-import evacuation.model.{EvacuationDirectionAccessible, EvacuationDirectionCell, ExitCell, ExitCellAccessible, PersonAccessible, PersonCell, TeleportationAccessible, TeleportationCell}
+import evacuation.model.{EvacuationDirectionCell, EvacuationDirectionSmellStrength, ExitCell, ExitCellAccessible, PersonAccessible, PersonCell, TeleportationAccessible, TeleportationCell}
 import evacuation.simulation.EvacuationMetrics
 import pl.edu.agh.xinuk.algorithm.MovesController
 import pl.edu.agh.xinuk.model.Cell.SmellArray
@@ -15,7 +16,8 @@ import scala.collection.immutable.TreeSet
 
 final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit config: EvacuationConfig)  extends MovesController {
 
-  val boundaryIterationNo = 50
+  val boundaryIterationNo = 21
+  val createExitsIterationNo = 12
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
   val buildingMap: BuildingMap = new BuildingMap()
 
@@ -35,11 +37,8 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
       def createSmellSources(): Unit = {
         for (smellOrigin <- buildingMap.smellOrigins) {
-          grid.cells(smellOrigin.y)(smellOrigin.x) = EvacuationDirectionAccessible.unapply(EmptyCell.Instance).withEvacuationDirection(false)
-        }
-
-        for (smellOrigin <- buildingMap.exits) {
-          grid.cells(smellOrigin.y)(smellOrigin.x) = EvacuationDirectionAccessible.unapply(EmptyCell.Instance).withEvacuationDirection(true)
+          grid.cells(smellOrigin.y)(smellOrigin.x) =
+            EvacuationDirectionCell.create(config.evacuationDirectionInitialSignal, false, EvacuationDirectionSmellStrength.Strong)
         }
       }
 
@@ -68,7 +67,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
         y <- 0 until config.gridSize
         x <- 0 until config.gridSize
       } yield (x, y, grid.cells(x)(y))).partition({
-        case (_, _, EvacuationDirectionCell(_, _)) => true
+        case (_, _, EvacuationDirectionCell(_, _, _)) => true
         case (_, _, _) => false
       })
 
@@ -87,7 +86,16 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     }
 
     def copyEvacuationDirectionCell(x: Int, y: Int, cell: EvacuationDirectionCell): Unit = {
-      newGrid.cells(x)(y) = EvacuationDirectionAccessible.unapply(EmptyCell.Instance).withEvacuationDirection(cell.exit) //EvacuationDirectionCell.create(config.evacuationDirectionInitialSignal)
+      val strength: (Signal, EvacuationDirectionSmellStrength) = cell match {
+        case EvacuationDirectionCell(_, _, EvacuationDirectionSmellStrength.Weak) =>
+          (config.evacuationDirectionInitialSignalWeak, EvacuationDirectionSmellStrength.Weak)
+        case EvacuationDirectionCell(_, _, EvacuationDirectionSmellStrength.Medium) =>
+          (config.evacuationDirectionInitialSignalMedium, EvacuationDirectionSmellStrength.Medium)
+        case EvacuationDirectionCell(_, _, EvacuationDirectionSmellStrength.Strong) =>
+          (config.evacuationDirectionInitialSignal, EvacuationDirectionSmellStrength.Strong)
+        case _ => null
+      }
+      newGrid.cells(x)(y) = EvacuationDirectionCell.create(strength._1, cell.exit, strength._2)
     }
 
     def createSmellSnapshot(): Unit = {
@@ -95,7 +103,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
         x <- 0 until config.gridSize
         y <- 0 until config.gridSize
       } grid.cells(y)(x) match {
-        case EvacuationDirectionCell(_, exit) => {
+        case EvacuationDirectionCell(_, exit, _) => {
           if (!exit) {
             val id = buildingMap.teleportationPairs.indexWhere(teleportPair => teleportPair.point1.x == x && teleportPair.point1.y == y)
             newGrid.cells(y)(x) = TeleportationCell(id, Cell.emptySignal)
@@ -121,8 +129,8 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     }
 
     def placePeopleOnGridTest(): Unit = {
-      newGrid.cells(19)(54) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-      newGrid.cells(19)(56) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
+      newGrid.cells(129)(21) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
+      newGrid.cells(129)(23) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
     }
 
     def simulateEvacuation(): Unit = {
@@ -215,7 +223,24 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
         }
     }
 
-    if (iteration < boundaryIterationNo) propagateInitialSmell()
+    def createExitCells(): Unit= {
+      for (smellOrigin <- buildingMap.exits) {
+          val signal: Signal = smellOrigin._2 match {
+            case EvacuationDirectionSmellStrength.Strong => config.evacuationDirectionInitialSignal
+            case EvacuationDirectionSmellStrength.Medium => config.evacuationDirectionInitialSignalMedium
+            case EvacuationDirectionSmellStrength.Weak => config.evacuationDirectionInitialSignalWeak
+            case _ => config.evacuationDirectionInitialSignal
+          }
+          grid.cells(smellOrigin._1.y)(smellOrigin._1.x) =
+            EvacuationDirectionCell.create(signal, true, smellOrigin._2)
+        }
+    }
+
+    if (iteration < boundaryIterationNo) {
+      if (iteration == createExitsIterationNo)
+        createExitCells()
+      propagateInitialSmell()
+    }
     else if (iteration == boundaryIterationNo) {
       createSmellSnapshot()
       placePeopleOnGrid()

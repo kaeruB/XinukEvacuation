@@ -23,7 +23,7 @@ object PersonAccessible {
   def unapply (arg: EvacuationDirectionCell)(implicit config: EvacuationConfig): PersonAccessible[EvacuationDirectionCell] =
     new PersonAccessible[EvacuationDirectionCell] {
       override def withPerson(): EvacuationDirectionCell =
-        EvacuationDirectionCell(arg.smell, arg.exit)
+        EvacuationDirectionCell(arg.smell, arg.exit, arg.evacuationDirectionSmellStrength)
     }
 
   def unapply (arg: TeleportationCell)(implicit config: EvacuationConfig): PersonAccessible[TeleportationCell] =
