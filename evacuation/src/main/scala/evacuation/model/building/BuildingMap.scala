@@ -485,31 +485,32 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     new PointPair(smellSources.M_b, teleportationDestination.M_b)
   )
 
-  val exits: Array[(Point, EvacuationDirectionSmellStrength)] = Array(
+  // (where, smell strength, door id)
+  val exits: Array[(Point, EvacuationDirectionSmellStrength, Int)] = Array(
     // A
-    (new Point(145, 176), EvacuationDirectionSmellStrength.Weak),
-    (new Point(146, 176), EvacuationDirectionSmellStrength.Strong),
+    (new Point(145, 176), EvacuationDirectionSmellStrength.Weak, 0),
+    (new Point(146, 176), EvacuationDirectionSmellStrength.Strong, 0),
 
     // B
-    (new Point(123, 214), EvacuationDirectionSmellStrength.Weak),
-    (new Point(123, 215), EvacuationDirectionSmellStrength.Weak),
-    (new Point(123, 216), EvacuationDirectionSmellStrength.Weak),
-    (new Point(123, 217), EvacuationDirectionSmellStrength.Weak),
+    (new Point(123, 214), EvacuationDirectionSmellStrength.Weak, 1),
+    (new Point(123, 215), EvacuationDirectionSmellStrength.Weak, 1),
+    (new Point(123, 216), EvacuationDirectionSmellStrength.Weak, 1),
+    (new Point(123, 217), EvacuationDirectionSmellStrength.Weak, 1),
 
     // C
-    (new Point(157, 263), EvacuationDirectionSmellStrength.Weak),
+    (new Point(157, 263), EvacuationDirectionSmellStrength.Weak, 2),
 
     // D
-    (new Point(182, 253), EvacuationDirectionSmellStrength.Strong),
+    (new Point(182, 253), EvacuationDirectionSmellStrength.Strong, 3),
 
     //E
-    (new Point(157, 214), EvacuationDirectionSmellStrength.Strong),
-    (new Point(157, 215), EvacuationDirectionSmellStrength.Weak),
-    (new Point(157, 216), EvacuationDirectionSmellStrength.Weak),
-    (new Point(157, 217), EvacuationDirectionSmellStrength.Weak),
+    (new Point(157, 214), EvacuationDirectionSmellStrength.Strong, 4),
+    (new Point(157, 215), EvacuationDirectionSmellStrength.Weak, 4),
+    (new Point(157, 216), EvacuationDirectionSmellStrength.Weak, 4),
+    (new Point(157, 217), EvacuationDirectionSmellStrength.Weak, 4),
 
     // F
-    (new Point(204, 176), EvacuationDirectionSmellStrength.Strong)
+    (new Point(204, 176), EvacuationDirectionSmellStrength.Strong, 5)
   )
 
   private def getWallsPoints: List[Point] = {

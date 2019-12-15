@@ -14,7 +14,12 @@ import evacuation.model.parallel.EvacuationConflictResolver
 object EvacuationMain extends LazyLogging {
   private val configPrefix = "evacuation"
   private val metricHeaders = Vector(
-    "evacuatedCount"
+    "evacuatedThroughDoor0Count",
+     "evacuatedThroughDoor1Count",
+     "evacuatedThroughDoor2Count",
+     "evacuatedThroughDoor3Count",
+     "evacuatedThroughDoor4Count",
+     "evacuatedThroughDoor5Count"
   )
 
   def colorSmell(cell: SmellingCell): Color = {

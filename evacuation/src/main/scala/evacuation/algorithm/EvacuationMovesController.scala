@@ -21,9 +21,12 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
   val buildingMap: BuildingMap = new BuildingMap()
 
+  val exitsNo: Int = 6
+  var evacuatedCounterByDoorId: Array[Int] = Array.ofDim[Int](exitsNo)
+
   override def initialGrid: (Grid, EvacuationMetrics) = {
     val grid = Grid.empty(bufferZone)
-    val metrics = EvacuationMetrics(0)
+    val metrics = EvacuationMetrics(0, 0, 0, 0, 0, 0)
 
     val wallsPoints = buildingMap.wallsPoints
 
@@ -60,7 +63,6 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
   override def makeMoves(iteration: Long, grid: Grid): (Grid, EvacuationMetrics) = {
     val newGrid = Grid.empty(bufferZone)
-    var evacuatedCount = 0L
 
     def propagateInitialSmell(): Unit = {
       val (dynamicCells, staticCells) = (for {
@@ -109,7 +111,11 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
             newGrid.cells(y)(x) = TeleportationCell(id, Cell.emptySignal)
           }
           else {
-            newGrid.cells(y)(x) = ExitCell(0, Cell.emptySignal) // TODO id
+            val foundExit = buildingMap.exits.find(exitEl => exitEl._1.x == x && exitEl._1.y == y)
+            var id = 0;
+            if (foundExit.nonEmpty)
+              id = foundExit.get._3
+            newGrid.cells(y)(x) = ExitCell(id, Cell.emptySignal)
           }
           staticSmellFloor(y)(x) = grid.cells(y)(x).smell
         }
@@ -174,8 +180,8 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
                 newGrid.cells(buildingMap.teleportationPairs(id).point2.y)(buildingMap.teleportationPairs(id).point2.x) = cell
             }
 
-            case ExitCell(_, _) => {
-              evacuatedCount += 1
+            case ExitCell(id, _) => {
+              evacuatedCounterByDoorId(id) += 1
             }
 
             case _ => {
@@ -251,7 +257,14 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     }
     else simulateEvacuation()
 
-    val metrics = EvacuationMetrics(evacuatedCount)
+    val metrics = EvacuationMetrics(
+      evacuatedCounterByDoorId(0),
+      evacuatedCounterByDoorId(1),
+      evacuatedCounterByDoorId(2),
+      evacuatedCounterByDoorId(3),
+      evacuatedCounterByDoorId(4),
+      evacuatedCounterByDoorId(5)
+    )
     (newGrid, metrics)
   }
 }
