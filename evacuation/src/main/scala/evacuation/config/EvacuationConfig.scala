@@ -31,7 +31,6 @@ final case class EvacuationConfig(
                                    peopleNoFloorI: Int,
                                    peopleNoFloorJ: Int,
                                    peopleNoFloorK: Int,
-                                   peopleNoFloorL: Int,
                                    peopleNoFloorM: Int,
                                    peopleNoFloorZ: Int
                                  )extends XinukConfigWithBendFactors
