@@ -16,8 +16,8 @@ import scala.collection.immutable.TreeSet
 
 final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit config: EvacuationConfig)  extends MovesController {
 
-  val boundaryIterationNo = 21
-  val createExitsIterationNo = 12
+  val boundaryIterationNo = 16
+  val createExitsIterationNo = 7
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
   val buildingMap: BuildingMap = new BuildingMap()
 
@@ -124,6 +124,9 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
     def placePeopleOnGrid(): Unit = {
       for (point <- buildingMap.peoplePoints) {
+        newGrid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
+      }
+      for (point <- buildingMap.peoplePointsOnFloor1) {
         newGrid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
       }
     }

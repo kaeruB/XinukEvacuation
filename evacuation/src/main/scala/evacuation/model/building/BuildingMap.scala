@@ -286,11 +286,11 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     val J_b = new Point(103,149)
     val K_a = new Point(92, 247)
     val K_b = new Point(103,215)
-    val L_a = new Point(133, 251)
-    val L_b = new Point(167, 251)
+    val L_a = new Point(133, 251) // on 1st floor
+    val L_b = new Point(167, 251) // on 1st floor
 
-    val M_a = new Point(133, 238)
-    val M_b = new Point(167, 238)
+    val M_a = new Point(133, 238) // on 1st floor
+    val M_b = new Point(167, 238) // on 1st floor
   }
 
   private object doors {
@@ -406,6 +406,15 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     )
   }
 
+  private object rectanglesCornersDrawingAvailableSpaceOnFloor1 {
+    val floorZ: Array[PointPair] = Array(
+      new PointPair(new Point(119,177), new Point(213, 205)),
+      new PointPair(new Point(124, 206), new Point(156, 237)),
+      new PointPair(new Point(119, 227), new Point(123, 262)),
+      new PointPair(new Point(170, 227), new Point(181, 262))
+    )
+  }
+
   val wallsPoints: List[Point] = getWallsPoints
 
   val smellOrigins: Array[Point] = Array(
@@ -467,6 +476,7 @@ final class BuildingMap(implicit config: EvacuationConfig) {
   )
 
   val peoplePoints: List[Point] = getPeoplePoints
+  val peoplePointsOnFloor1: List[Point] = getPeoplePointsOnFloor1
 
   val teleportationPairs: Array[PointPair] = Array(
     new PointPair(smellSources.A_a, teleportationDestination.A_a),
@@ -552,19 +562,22 @@ final class BuildingMap(implicit config: EvacuationConfig) {
 
   private def getPeoplePoints: List[Point] = {
       getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorA, config.peopleNoFloorA) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorB, config.peopleNoFloorB) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorC, config.peopleNoFloorC) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorD, config.peopleNoFloorD) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorE, config.peopleNoFloorE) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorF, config.peopleNoFloorF) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorG, config.peopleNoFloorG) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorH, config.peopleNoFloorH) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorI, config.peopleNoFloorI) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorJ, config.peopleNoFloorJ) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorK, config.peopleNoFloorK) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorL, config.peopleNoFloorL) ++
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorM, config.peopleNoFloorM)
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorB, config.peopleNoFloorB) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorC, config.peopleNoFloorC) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorD, config.peopleNoFloorD) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorE, config.peopleNoFloorE) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorF, config.peopleNoFloorF) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorG, config.peopleNoFloorG) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorH, config.peopleNoFloorH) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorI, config.peopleNoFloorI) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorJ, config.peopleNoFloorJ) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorK, config.peopleNoFloorK) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorL, config.peopleNoFloorL) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorM, config.peopleNoFloorM)
+  }
 
+  private def getPeoplePointsOnFloor1: List[Point] = {
+      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloor1.floorZ, config.peopleNoFloorZ)
   }
 
   private def getPeopleOnFloor(floorParts: Array[PointPair], noOfPeople: Int): List[Point] = {
