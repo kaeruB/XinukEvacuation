@@ -220,9 +220,15 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     new PointPair(new Point(133, 238), new Point(133, 251)),
     new PointPair(new Point(133, 251), new Point(138, 251)),
 
+    new PointPair(new Point(134, 240), new Point(136, 240)),
+    new PointPair(new Point(134, 249), new Point(136, 249)),
+
     new PointPair(new Point(162, 238), new Point(167, 238)),
     new PointPair(new Point(167, 238), new Point(167, 251)),
-    new PointPair(new Point(162, 251), new Point(167, 251))
+    new PointPair(new Point(162, 251), new Point(167, 251)),
+
+    new PointPair(new Point(164, 240), new Point(166, 240)),
+    new PointPair(new Point(164, 249), new Point(166, 249))
   )
 
   private object smellSources {
@@ -399,7 +405,7 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     )
   }
 
-  val wallsPoints: List[Point] = getWallsPoints
+  val wallsPoints: List[Point] = getWallsPoints(walls)
 
   val smellOrigins: Array[Point] = Array(
     smellSources.A_a,
@@ -504,19 +510,19 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     (new Point(182, 253), EvacuationDirectionSmellStrength.Strong, 3),
 
     //E
-    (new Point(157, 214), EvacuationDirectionSmellStrength.Strong, 4),
+    (new Point(157, 214), EvacuationDirectionSmellStrength.Weak, 4),
     (new Point(157, 215), EvacuationDirectionSmellStrength.Weak, 4),
     (new Point(157, 216), EvacuationDirectionSmellStrength.Weak, 4),
-    (new Point(157, 217), EvacuationDirectionSmellStrength.Weak, 4),
+    (new Point(157, 217), EvacuationDirectionSmellStrength.Strong, 4),
 
     // F
     (new Point(204, 176), EvacuationDirectionSmellStrength.Strong, 5)
   )
 
-  private def getWallsPoints: List[Point] = {
+  private def getWallsPoints(lineStartAndEndPoint: Array[PointPair]): List[Point] = {
     var wallsPointsList: List[Point] = List.empty
-    for (pointsPair <- walls.indices) {
-      val newPointsList = getPointsList(walls(pointsPair).point1, walls(pointsPair).point2)
+    for (pointsPair <- lineStartAndEndPoint.indices) {
+      val newPointsList = getPointsList(lineStartAndEndPoint(pointsPair).point1, lineStartAndEndPoint(pointsPair).point2)
       wallsPointsList = wallsPointsList ++ newPointsList
     }
     wallsPointsList
@@ -562,11 +568,19 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     var result: List[Point] = List.empty
 
     for (_ <- 0 until noOfPeople) {
-      val randomFloorPart = floorParts(random.nextInt(4))
 
-      val randomPointX = random.nextInt(randomFloorPart.point2.x - randomFloorPart.point1.x + 1) + randomFloorPart.point1.x
-      val randomPointY = random.nextInt(randomFloorPart.point2.y - randomFloorPart.point1.y + 1) + randomFloorPart.point1.y
+      var randomPointX = 0
+      var randomPointY = 0
+      var newPointFound = false
 
+      while(!newPointFound) {
+        val randomFloorPart = floorParts(random.nextInt(4))
+
+        randomPointX = random.nextInt(randomFloorPart.point2.x - randomFloorPart.point1.x + 1) + randomFloorPart.point1.x
+        randomPointY = random.nextInt(randomFloorPart.point2.y - randomFloorPart.point1.y + 1) + randomFloorPart.point1.y
+
+        if (!result.exists(point => point.x == randomPointX && point.y == randomPointY)) newPointFound = true
+      }
       result = new Point(randomPointY, randomPointX) :: result
     }
 
