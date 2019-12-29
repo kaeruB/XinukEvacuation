@@ -142,14 +142,41 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
       newGrid.cells(129)(23) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
     }
 
-    def simulateEvacuation(): Unit = {
+    def getShuffledIndexes(): List[Int] = {
+      scala.util.Random.shuffle(List.range(0, config.gridSize))
+    }
+
+    def getDynamicAndStaticCellsShuffled(): (List[(Int, Int, GridPart)], List[(Int, Int, GridPart)]) = {
+      val xShuffled = getShuffledIndexes()
+      val yShuffled = getShuffledIndexes()
+
       val (dynamicCells, staticCells) = (for {
-        y <- 0 until config.gridSize
-        x <- 0 until config.gridSize
+        y <- yShuffled
+        x <- xShuffled
       } yield (x, y, grid.cells(x)(y))).partition({
         case (_, _, PersonCell(_)) => true
         case (_, _, _) => false
       })
+
+      (dynamicCells, staticCells)
+    }
+
+    def getDynamicAndStaticCells(): (List[(Int, Int, GridPart)], List[(Int, Int, GridPart)]) = {
+      val indexes: List[Int] = List.range(0, config.gridSize)
+
+      val (dynamicCells, staticCells) = (for {
+        y <- indexes
+        x <- indexes
+      } yield (x, y, grid.cells(x)(y))).partition({
+        case (_, _, PersonCell(_)) => true
+        case (_, _, _) => false
+      })
+
+      (dynamicCells, staticCells)
+    }
+
+    def simulateEvacuation(): Unit = {
+      val (dynamicCells, staticCells) = getDynamicAndStaticCellsShuffled() // getDynamicAndStaticCells() getDynamicAndStaticCellsShuffled()
 
       staticCells.foreach({
         case (x, y, Obstacle) => newGrid.cells(x)(y) = Obstacle
