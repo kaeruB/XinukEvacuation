@@ -462,6 +462,7 @@ final class BuildingMap(implicit config: EvacuationConfig) {
   )
 
   val peoplePoints: List[Point] = getPeoplePoints
+  val peoplePointsOnFloor567 = getPeoplePointsOnFloor567
   val peoplePointsOnFloor1: List[Point] = getPeoplePointsOnFloor1
 
   val teleportationPairs: Array[PointPair] = Array(
@@ -550,14 +551,17 @@ final class BuildingMap(implicit config: EvacuationConfig) {
         getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorB, config.peopleNoFloorB) ++
         getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorC, config.peopleNoFloorC) ++
         getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorD, config.peopleNoFloorD) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorE, config.peopleNoFloorE) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorF, config.peopleNoFloorF) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorG, config.peopleNoFloorG) ++
         getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorH, config.peopleNoFloorH) ++
         getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorI, config.peopleNoFloorI) ++
         getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorJ, config.peopleNoFloorJ) ++
         getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorK, config.peopleNoFloorK) ++
         getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorM, config.peopleNoFloorM)
+  }
+
+  private def getPeoplePointsOnFloor567: List[Point] = {
+    getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorE, config.peopleNoFloorE) ++
+    getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorF, config.peopleNoFloorF) ++
+    getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorG, config.peopleNoFloorG)
   }
 
   private def getPeoplePointsOnFloor1: List[Point] = {

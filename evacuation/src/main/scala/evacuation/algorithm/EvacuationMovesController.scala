@@ -18,6 +18,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
   val boundaryIterationNo = 16
   val createExitsIterationNo = 7
+  val startSecondPhaseOfEvacuationIterationNo = 220
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
   val buildingMap: BuildingMap = new BuildingMap()
 
@@ -129,6 +130,12 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     }
 
     def placePeopleOnGrid(): Unit = {
+      for (point <- buildingMap.peoplePointsOnFloor567) {
+        newGrid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
+      }
+    }
+
+    def placePeopleOnGridSecondPhase(): Unit = {
       for (point <- buildingMap.peoplePoints) {
         newGrid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
       }
@@ -301,9 +308,11 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
       placePeopleOnGrid()
       // placePeopleOnGridTest()
     }
-    else simulateEvacuation()
-
-
+    else {
+      simulateEvacuation()
+      if (iteration == startSecondPhaseOfEvacuationIterationNo)
+        placePeopleOnGridSecondPhase()
+    }
 
     def printPeopleEvacuatedAndOnGridNumber(): Unit = {
 
