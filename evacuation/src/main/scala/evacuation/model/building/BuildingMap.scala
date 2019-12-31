@@ -394,14 +394,17 @@ final class BuildingMap(implicit config: EvacuationConfig) {
       new PointPair(new Point(130, 51), new Point(143, 64)),
       new PointPair(new Point(144, 2), new Point(154, 64))
     )
+    val floorZTower: Array[PointPair] = Array(
+      new PointPair(new Point(119, 227), new Point(123, 262)),
+      new PointPair(new Point(170, 227), new Point(181, 262))
+    )
   }
 
   private object rectanglesCornersDrawingAvailableSpaceOnFloor1 {
     val floorZ: Array[PointPair] = Array(
-      new PointPair(new Point(119,177), new Point(213, 205)),
-      new PointPair(new Point(124, 206), new Point(156, 237)),
-      new PointPair(new Point(119, 227), new Point(123, 262)),
-      new PointPair(new Point(170, 227), new Point(181, 262))
+      new PointPair(new Point(119,177), new Point(157, 205)),
+      new PointPair(new Point(158,177), new Point(213, 205)),
+      new PointPair(new Point(124, 206), new Point(156, 237))
     )
   }
 
@@ -555,7 +558,8 @@ final class BuildingMap(implicit config: EvacuationConfig) {
         getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorI, config.peopleNoFloorI) ++
         getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorJ, config.peopleNoFloorJ) ++
         getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorK, config.peopleNoFloorK) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorM, config.peopleNoFloorM)
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorM, config.peopleNoFloorM) ++
+        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorZTower, config.peopleNoFloorZTower)
   }
 
   private def getPeoplePointsOnFloor567: List[Point] = {
@@ -570,6 +574,7 @@ final class BuildingMap(implicit config: EvacuationConfig) {
 
   private def getPeopleOnFloor(floorParts: Array[PointPair], noOfPeople: Int): List[Point] = {
     var result: List[Point] = List.empty
+    val floorPartsNo = floorParts.length
 
     for (_ <- 0 until noOfPeople) {
 
@@ -578,7 +583,7 @@ final class BuildingMap(implicit config: EvacuationConfig) {
       var newPointFound = false
 
       while(!newPointFound) {
-        val randomFloorPart = floorParts(random.nextInt(4))
+        val randomFloorPart = floorParts(random.nextInt(floorPartsNo))
 
         randomPointX = random.nextInt(randomFloorPart.point2.x - randomFloorPart.point1.x + 1) + randomFloorPart.point1.x
         randomPointY = random.nextInt(randomFloorPart.point2.y - randomFloorPart.point1.y + 1) + randomFloorPart.point1.y
