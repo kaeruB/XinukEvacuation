@@ -130,17 +130,25 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     new PointPair(new Point(13, 214), new Point(26, 214)),
 
     // corridor A
-    new PointPair(new Point(15, 16), new Point(15, 50)),
-    new PointPair(new Point(24, 16), new Point(24, 50)),
+    new PointPair(new Point(15, 16), new Point(15, 48)),
+    new PointPair(new Point(15, 48), new Point(24, 48)),
+    new PointPair(new Point(15, 18), new Point(24, 18)),
+    new PointPair(new Point(24, 18), new Point(24, 50)),
     // corridor B
-    new PointPair(new Point(15, 82), new Point(15, 116)),
-    new PointPair(new Point(24, 82), new Point(24, 116)),
+    new PointPair(new Point(15, 82), new Point(15, 114)),
+    new PointPair(new Point(15, 114), new Point(24, 114)),
+    new PointPair(new Point(15, 84), new Point(24, 84)),
+    new PointPair(new Point(24, 84), new Point(24, 116)),
     // corridor C
-    new PointPair(new Point(15, 148), new Point(15, 182)),
-    new PointPair(new Point(24, 148), new Point(24, 182)),
+    new PointPair(new Point(15, 148), new Point(15, 180)),
+    new PointPair(new Point(15, 180), new Point(24, 180)),
+    new PointPair(new Point(15, 150), new Point(24, 150)),
+    new PointPair(new Point(24, 150), new Point(24, 182)),
     // corridor D
-    new PointPair(new Point(15, 214), new Point(15, 248)),
-    new PointPair(new Point(24, 214), new Point(24, 248)),
+    new PointPair(new Point(15, 214), new Point(15, 246)),
+    new PointPair(new Point(15, 246), new Point(24, 246)),
+    new PointPair(new Point(15, 216), new Point(24, 216)),
+    new PointPair(new Point(24, 216), new Point(24, 248)),
 
     // 2nd row
     // E
@@ -165,17 +173,25 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     new PointPair(new Point(52, 214), new Point(65, 214)),
 
     // corridor E
-    new PointPair(new Point(54, 16), new Point(54, 50)),
-    new PointPair(new Point(63, 16), new Point(63, 50)),
+    new PointPair(new Point(54, 16), new Point(54, 48)),
+    new PointPair(new Point(54, 48), new Point(63, 48)),
+    new PointPair(new Point(54, 18), new Point(63, 18)),
+    new PointPair(new Point(63, 18), new Point(63, 50)),
     // corridor F
-    new PointPair(new Point(54, 82), new Point(54, 116)),
-    new PointPair(new Point(63, 82), new Point(63, 116)),
+    new PointPair(new Point(54, 82), new Point(54, 114)),
+    new PointPair(new Point(54, 114), new Point(63, 114)),
+    new PointPair(new Point(54, 84), new Point(63, 84)),
+    new PointPair(new Point(63, 84), new Point(63, 116)),
     // corridor G
-    new PointPair(new Point(54, 148), new Point(54, 182)),
-    new PointPair(new Point(63, 148), new Point(63, 182)),
+    new PointPair(new Point(54, 148), new Point(54, 180)),
+    new PointPair(new Point(54, 180), new Point(63, 180)),
+    new PointPair(new Point(54, 150), new Point(63, 150)),
+    new PointPair(new Point(63, 150), new Point(63, 182)),
     // corridor H
-    new PointPair(new Point(54, 214), new Point(54, 248)),
-    new PointPair(new Point(63, 214), new Point(63, 248)),
+    new PointPair(new Point(54, 214), new Point(54, 246)),
+    new PointPair(new Point(54, 246), new Point(63, 246)),
+    new PointPair(new Point(54, 216), new Point(63, 216)),
+    new PointPair(new Point(63, 216), new Point(63, 248)),
 
     // 3rd row
     // I
@@ -195,14 +211,20 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     new PointPair(new Point(91, 148), new Point(104, 148)),
 
     // corridor I
-    new PointPair(new Point(93, 16), new Point(93, 50)),
-    new PointPair(new Point(102, 16), new Point(102, 50)),
+    new PointPair(new Point(93, 16), new Point(93, 48)),
+    new PointPair(new Point(93, 48), new Point(102, 48)),
+    new PointPair(new Point(93, 18), new Point(102, 18)),
+    new PointPair(new Point(102, 18), new Point(102, 50)),
     // corridor J
-    new PointPair(new Point(93, 82), new Point(93, 116)),
-    new PointPair(new Point(102, 82), new Point(102, 116)),
+    new PointPair(new Point(93, 82), new Point(93, 114)),
+    new PointPair(new Point(93, 114), new Point(102, 114)),
+    new PointPair(new Point(93, 84), new Point(102, 84)),
+    new PointPair(new Point(102, 84), new Point(102, 116)),
     // corridor K
-    new PointPair(new Point(93, 148), new Point(93, 182)),
-    new PointPair(new Point(102, 148), new Point(102, 182)),
+    new PointPair(new Point(93, 148), new Point(93, 180)),
+    new PointPair(new Point(93, 180), new Point(102, 180)),
+    new PointPair(new Point(93, 150), new Point(102, 150)),
+    new PointPair(new Point(102, 150), new Point(102, 182)),
 
     // 4rd row
     // M
@@ -212,8 +234,10 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     new PointPair(new Point(130, 16), new Point(143, 16)),
 
     //corridor M
-    new PointPair(new Point(132, 16), new Point(132, 50)),
-    new PointPair(new Point(141, 16), new Point(141, 50)),
+    new PointPair(new Point(132, 16), new Point(132, 48)),
+    new PointPair(new Point(132, 48), new Point(141, 48)),
+    new PointPair(new Point(132, 18), new Point(141, 18)),
+    new PointPair(new Point(141, 18), new Point(141, 50)),
 
     //ground floor
     new PointPair(new Point(133, 238), new Point(138, 238)),
@@ -262,28 +286,28 @@ final class BuildingMap(implicit config: EvacuationConfig) {
   }
 
   private object teleportationDestination {
-    val A_a = new Point(14, 115)
-    val A_b = new Point(25, 83 )
-    val B_a = new Point(14, 181)
-    val B_b = new Point(25, 149)
-    val C_a = new Point(14, 247)
-    val C_b = new Point(25, 215)
-    val D_a = new Point(53, 49)
-    val D_b = new Point(64, 17)
+    val A_a = new Point(23, 115)
+    val A_b = new Point(16, 83 )
+    val B_a = new Point(23, 181)
+    val B_b = new Point(16, 149)
+    val C_a = new Point(23, 247)
+    val C_b = new Point(16, 215)
+    val D_a = new Point(62, 49)
+    val D_b = new Point(55, 17)
 
-    val E_a = new Point(53, 115)
-    val E_b = new Point(64, 83 )
-    val F_a = new Point(53, 181)
-    val F_b = new Point(64, 149)
-    val G_a = new Point(53, 247)
-    val G_b = new Point(64, 215)
-    val H_a = new Point(92, 49)
-    val H_b = new Point(103, 17)
+    val E_a = new Point(62, 115)
+    val E_b = new Point(55, 83 )
+    val F_a = new Point(62, 181)
+    val F_b = new Point(55, 149)
+    val G_a = new Point(62, 247)
+    val G_b = new Point(55, 215)
+    val H_a = new Point(101, 49)
+    val H_b = new Point(94, 17)
 
-    val I_a = new Point(92, 115)
-    val I_b = new Point(103,83 )
-    val J_a = new Point(92, 181)
-    val J_b = new Point(103,149)
+    val I_a = new Point(101, 115)
+    val I_b = new Point(94, 83)
+    val J_a = new Point(101, 181)
+    val J_b = new Point(94, 149)
     val K_a = new Point(134, 250) // on 1st floor
     val K_b = new Point(166, 250) // on 1st floor
 
@@ -498,7 +522,7 @@ final class BuildingMap(implicit config: EvacuationConfig) {
   // (where, smell strength, door id)
   val exits: Array[(Point, EvacuationDirectionSmellStrength, Int)] = Array(
     // A
-    (new Point(145, 176), EvacuationDirectionSmellStrength.Weak, 0),
+    (new Point(145, 176), EvacuationDirectionSmellStrength.Medium, 0),
     (new Point(146, 176), EvacuationDirectionSmellStrength.Strong, 0),
 
     // B
@@ -514,10 +538,10 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     (new Point(182, 253), EvacuationDirectionSmellStrength.Strong, 3),
 
     //E
-    (new Point(157, 214), EvacuationDirectionSmellStrength.Weak, 4),
-    (new Point(157, 215), EvacuationDirectionSmellStrength.Weak, 4),
-    (new Point(157, 216), EvacuationDirectionSmellStrength.Weak, 4),
-    (new Point(157, 217), EvacuationDirectionSmellStrength.Strong, 4),
+    (new Point(157, 214), EvacuationDirectionSmellStrength.Medium, 4),
+    (new Point(157, 215), EvacuationDirectionSmellStrength.Medium, 4),
+    (new Point(157, 216), EvacuationDirectionSmellStrength.Strong, 4),
+    (new Point(157, 217), EvacuationDirectionSmellStrength.Medium, 4),
 
     // F
     (new Point(204, 176), EvacuationDirectionSmellStrength.Strong, 5)
