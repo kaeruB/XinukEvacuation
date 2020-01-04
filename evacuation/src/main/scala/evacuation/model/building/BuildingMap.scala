@@ -547,17 +547,17 @@ final class BuildingMap(implicit config: EvacuationConfig) {
   val exits: Array[(Point, EvacuationDirectionSmellStrength, Int)] = Array(
     // B
     (new Point(123, 214), EvacuationDirectionSmellStrength.Weak, 1),
-//    (new Point(123, 215), EvacuationDirectionSmellStrength.Weak, 1),
-//    (new Point(123, 216), EvacuationDirectionSmellStrength.Weak, 1),
-//    (new Point(123, 217), EvacuationDirectionSmellStrength.Weak, 1),
+    (new Point(123, 215), EvacuationDirectionSmellStrength.Weak, 1),
+    (new Point(123, 216), EvacuationDirectionSmellStrength.Weak, 1),
+    (new Point(123, 217), EvacuationDirectionSmellStrength.Weak, 1),
 
     // C
     (new Point(157, 263), EvacuationDirectionSmellStrength.Weak, 2),
 
     //E
-//    (new Point(157, 215), EvacuationDirectionSmellStrength.Weak, 4),
-//    (new Point(157, 216), EvacuationDirectionSmellStrength.Weak, 4),
-//    (new Point(157, 217), EvacuationDirectionSmellStrength.Weak, 4),
+    (new Point(157, 215), EvacuationDirectionSmellStrength.Weak, 4),
+    (new Point(157, 216), EvacuationDirectionSmellStrength.Weak, 4),
+    (new Point(157, 217), EvacuationDirectionSmellStrength.Weak, 4),
     (new Point(157, 218), EvacuationDirectionSmellStrength.Strong, 4),
 
     // F
