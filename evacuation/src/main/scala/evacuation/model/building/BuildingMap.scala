@@ -100,7 +100,7 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     // B
     new PointPair(new Point(122, 213), new Point(122, 219)),
     // D
-    new PointPair(new Point(183, 252), new Point(183, 254)),
+    new PointPair(new Point(183, 253), new Point(183, 255)),
     // E
     new PointPair(new Point(158, 213), new Point(158, 219)),
     // F
@@ -254,6 +254,14 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     new PointPair(new Point(164, 240), new Point(166, 240)),
     new PointPair(new Point(164, 249), new Point(166, 249))
   )
+
+  private val egressRoutesBorders: Array[PointPair] = Array(
+    new PointPair(new Point(119, 252), new Point(145, 252)),
+    new PointPair(new Point(145, 226), new Point(145, 252)),
+    new PointPair(new Point(145, 226), new Point(156, 226))
+  )
+
+  val egressRoutesBordersPoints: List[Point] = getWallsPoints(egressRoutesBorders)
 
   private object smellSources {
     val A_a = new Point(14,  17)
@@ -488,9 +496,25 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     doors.M_b
   )
 
-  val peoplePoints: List[Point] = getPeoplePoints
-  val peoplePointsOnFloor567 = getPeoplePointsOnFloor567
-  val peoplePointsOnFloor1: List[Point] = getPeoplePointsOnFloor1
+  var peopleGeneralAlarm: Array[(Array[PointPair], Int)] = Array(
+      Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorA, config.peopleNoFloorA),
+      Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorB, config.peopleNoFloorB),
+      Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorC, config.peopleNoFloorC),
+      Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorD, config.peopleNoFloorD),
+      Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorH, config.peopleNoFloorH),
+      Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorI, config.peopleNoFloorI),
+      Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorJ, config.peopleNoFloorJ),
+      Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorK, config.peopleNoFloorK),
+      Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorM, config.peopleNoFloorM),
+      Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorZTower, config.peopleNoFloorZTower),
+      Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloor1.floorZ, config.peopleNoFloorZ)
+    )
+
+  var peopleInitialAlarm: Array[(Array[PointPair], Int)] = Array(
+    Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorE, config.peopleNoFloorE),
+    Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorF, config.peopleNoFloorF),
+    Tuple2(rectanglesCornersDrawingAvailableSpaceOnFloors.floorG, config.peopleNoFloorG)
+  )
 
   val teleportationPairs: Array[PointPair] = Array(
     new PointPair(smellSources.A_a, teleportationDestination.A_a),
@@ -521,31 +545,27 @@ final class BuildingMap(implicit config: EvacuationConfig) {
 
   // (where, smell strength, door id)
   val exits: Array[(Point, EvacuationDirectionSmellStrength, Int)] = Array(
-    // A
-    (new Point(145, 176), EvacuationDirectionSmellStrength.Medium, 0),
-    (new Point(146, 176), EvacuationDirectionSmellStrength.Strong, 0),
-
     // B
     (new Point(123, 214), EvacuationDirectionSmellStrength.Weak, 1),
-    (new Point(123, 215), EvacuationDirectionSmellStrength.Weak, 1),
-    (new Point(123, 216), EvacuationDirectionSmellStrength.Weak, 1),
-    (new Point(123, 217), EvacuationDirectionSmellStrength.Weak, 1),
+//    (new Point(123, 215), EvacuationDirectionSmellStrength.Weak, 1),
+//    (new Point(123, 216), EvacuationDirectionSmellStrength.Weak, 1),
+//    (new Point(123, 217), EvacuationDirectionSmellStrength.Weak, 1),
 
     // C
     (new Point(157, 263), EvacuationDirectionSmellStrength.Weak, 2),
 
-    // D
-    (new Point(182, 253), EvacuationDirectionSmellStrength.Strong, 3),
-
     //E
-    (new Point(157, 214), EvacuationDirectionSmellStrength.Medium, 4),
-    (new Point(157, 215), EvacuationDirectionSmellStrength.Medium, 4),
-    (new Point(157, 216), EvacuationDirectionSmellStrength.Strong, 4),
-    (new Point(157, 217), EvacuationDirectionSmellStrength.Medium, 4),
+//    (new Point(157, 215), EvacuationDirectionSmellStrength.Weak, 4),
+//    (new Point(157, 216), EvacuationDirectionSmellStrength.Weak, 4),
+//    (new Point(157, 217), EvacuationDirectionSmellStrength.Weak, 4),
+    (new Point(157, 218), EvacuationDirectionSmellStrength.Strong, 4),
 
     // F
     (new Point(204, 176), EvacuationDirectionSmellStrength.Strong, 5)
   )
+
+ val exitA: (Point, EvacuationDirectionSmellStrength, Int) = (new Point(145, 176), EvacuationDirectionSmellStrength.Strong, 0)
+ val exitD: (Point, EvacuationDirectionSmellStrength, Int) = (new Point(182, 255), EvacuationDirectionSmellStrength.Strong, 3)
 
   private def getWallsPoints(lineStartAndEndPoint: Array[PointPair]): List[Point] = {
     var wallsPointsList: List[Point] = List.empty
@@ -573,29 +593,6 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     result
   }
 
-  private def getPeoplePoints: List[Point] = {
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorA, config.peopleNoFloorA) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorB, config.peopleNoFloorB) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorC, config.peopleNoFloorC) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorD, config.peopleNoFloorD) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorH, config.peopleNoFloorH) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorI, config.peopleNoFloorI) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorJ, config.peopleNoFloorJ) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorK, config.peopleNoFloorK) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorM, config.peopleNoFloorM) ++
-        getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorZTower, config.peopleNoFloorZTower)
-  }
-
-  private def getPeoplePointsOnFloor567: List[Point] = {
-    getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorE, config.peopleNoFloorE) ++
-    getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorF, config.peopleNoFloorF) ++
-    getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloors.floorG, config.peopleNoFloorG)
-  }
-
-  private def getPeoplePointsOnFloor1: List[Point] = {
-      getPeopleOnFloor(rectanglesCornersDrawingAvailableSpaceOnFloor1.floorZ, config.peopleNoFloorZ)
-  }
-
   private def getPeopleOnFloor(floorParts: Array[PointPair], noOfPeople: Int): List[Point] = {
     var result: List[Point] = List.empty
     val floorPartsNo = floorParts.length
@@ -618,5 +615,19 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     }
 
     result
+  }
+
+  def getPersonOnFloor(floorParts: Array[PointPair]): Point = {
+    val floorPartsNo = floorParts.length
+
+    var randomPointX = 0
+    var randomPointY = 0
+
+    val randomFloorPart = floorParts(random.nextInt(floorPartsNo))
+
+    randomPointX = random.nextInt(randomFloorPart.point2.x - randomFloorPart.point1.x + 1) + randomFloorPart.point1.x
+    randomPointY = random.nextInt(randomFloorPart.point2.y - randomFloorPart.point1.y + 1) + randomFloorPart.point1.y
+
+    new Point(randomPointY, randomPointX)
   }
 }
