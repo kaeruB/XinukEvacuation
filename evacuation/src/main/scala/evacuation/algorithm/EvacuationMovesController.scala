@@ -206,7 +206,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     }
 
     def simulateEvacuation(): Unit = {
-      val (dynamicCells, staticCells) = getDynamicAndStaticCellsShuffled() // getDynamicAndStaticCells() getDynamicAndStaticCellsShuffled()
+      val (dynamicCells, staticCells) = getDynamicAndStaticCells() // getDynamicAndStaticCells() getDynamicAndStaticCellsShuffled()
 
       staticCells.foreach({
         case (x, y, Obstacle) => newGrid.cells(x)(y) = Obstacle
@@ -221,7 +221,9 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
     def movePersonCell(cellY: Int, cellX: Int, cell: PersonCell): Unit = {
       val destinations = calculatePossibleDestinations(cell, cellY, cellX, grid) // old grid
-      val destination = destinations.collectFirstOpt { case (i, j, cellInOldGrid) => (i, j, cellInOldGrid)} // selectDestinationCell(destinations, newGrid) // newGrid
+      val destination = selectDestinationCell(destinations, newGrid)
+        // destinations.collectFirstOpt { case (i, j, cellInOldGrid) => (i, j, cellInOldGrid)}
+        // selectDestinationCell(destinations, newGrid) // newGrid
 
       destination match {
         case Opt((i, j, PersonAccessible(destination))) => {
