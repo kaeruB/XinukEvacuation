@@ -100,7 +100,7 @@ final class BuildingMap(implicit config: EvacuationConfig) {
     // B
     new PointPair(new Point(122, 213), new Point(122, 219)),
     // D
-    new PointPair(new Point(183, 253), new Point(183, 255)),
+    new PointPair(new Point(183, 253), new Point(183, 256)),
     // E
     new PointPair(new Point(158, 213), new Point(158, 219)),
     // F
