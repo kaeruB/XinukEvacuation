@@ -1,6 +1,7 @@
 package evacuation
 
 import java.awt.Color
+import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
 import evacuation.algorithm.EvacuationMovesController
@@ -10,6 +11,9 @@ import pl.edu.agh.xinuk.SimulationWithWind
 import pl.edu.agh.xinuk.Simulation
 import pl.edu.agh.xinuk.model.{CurvedSmellPropagation, DefaultSmellPropagation, Obstacle, SmellingCell}
 import evacuation.model.parallel.EvacuationConflictResolver
+import evacuation.utils.ImgMapper.getClass
+
+import scala.util.Random
 
 object EvacuationMain extends LazyLogging {
   private val configPrefix = "evacuation"
