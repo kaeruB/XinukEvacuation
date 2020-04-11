@@ -7,8 +7,7 @@ import evacuation.config.EvacuationConfig
 import evacuation.model.EvacuationDirectionSmellStrength.EvacuationDirectionSmellStrength
 import evacuation.model.building.{Point, PointPair}
 import evacuation.utils.PeopleInRooms
-//import evacuation.model.building.{BuildingMap, Point}
-import evacuation.model.{EvacuationDirectionCell, EvacuationDirectionSmellStrength, ExitCell, ExitCellAccessible, PersonAccessible, PersonCell, TeleportationAccessible, TeleportationCell}
+import evacuation.model.{EvacuationDirectionCell, EvacuationDirectionSmellStrength, ExitCell, PersonAccessible, PersonCell, TeleportationCell}
 import evacuation.simulation.EvacuationMetrics
 import evacuation.utils.ImgMapper
 import pl.edu.agh.xinuk.algorithm.MovesController
@@ -21,23 +20,17 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
   val people: PeopleInRooms = new PeopleInRooms()
 
-  val boundaryIterationNo = 30
-//  val createExitsIterationNo = 7
-//  val createLeftUpperExitIterationNo = 14
-//  val startSecondPhaseOfEvacuationIterationNo = 200
-//  val allPeoplePlacedOnGridIterationNoInitialAlarm: Int = boundaryIterationNo + config.peopleNoFloorF
-//  val allPeoplePlacedOnGridIterationNoGeneralAlarm: Int = startSecondPhaseOfEvacuationIterationNo + config.peopleNoFloorZ
+  val boundaryIterationNo = 14
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
-//  val buildingMap: BuildingMap = new BuildingMap()
-//
-  val exitsNo: Int = 6 // TODO 4 ?
+
+  val exitsNo: Int = 4
   var evacuatedCounterByDoorId: Array[Int] = Array.ofDim[Int](exitsNo)
 
   val teleportationPairs: Array[PointPair] = ImgMapper.mapImgToTeleportationPairs("img/teleport_starts.png", "img/teleport_ends.png")
 
   override def initialGrid: (Grid, EvacuationMetrics) = {
     var grid = Grid.empty(bufferZone)
-    val metrics = EvacuationMetrics(0, 0, 0, 0, 0, 0)
+    val metrics = EvacuationMetrics(0, 0, 0, 0)
 
     grid = ImgMapper.mapImgToGrid("img/d17.png", grid)
 
@@ -108,14 +101,6 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
   override def makeMoves(iteration: Long, grid: Grid): (Grid, EvacuationMetrics) = {
     val newGrid = Grid.empty(bufferZone)
 
-    def tmpCopyFunc(): Unit = {
-      for {
-        y <- 0 until config.gridSize
-        x <- 0 until config.gridSize
-      }
-        copyCells(x, y, grid.cells(x)(y))
-    }
-
     def copyCells(x: Int, y: Int, cell: GridPart): Unit = {
       newGrid.cells(x)(y) = cell
     }
@@ -157,27 +142,12 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
         x <- 0 until config.gridSize
         y <- 0 until config.gridSize
       }  grid.cells(y)(x) match {
-        case EvacuationDirectionCell(_, exit, _) => {
-//          if (!exit) {
-//            val id = teleportationPairs.indexWhere(teleportPair => teleportPair.point1.x == x && teleportPair.point1.y == y)
-//            newGrid.cells(y)(x) = TeleportationCell(id, Cell.emptySignal)
-//          }
-//          else {
-//            val foundExit = buildingMap.exits.find(exitEl => exitEl._1.x == x && exitEl._1.y == y)
-//            var id = 0;
-//            if (foundExit.nonEmpty)
-//              id = foundExit.get._3
-//            newGrid.cells(y)(x) = ExitCell(id, Cell.emptySignal)
-//          }
+        case EvacuationDirectionCell(_, _, _) => {
           newGrid.cells(y)(x) = EmptyCell.Instance
           staticSmellFloor(y)(x) = grid.cells(y)(x).smell
         }
         case ExitCell(exitId, _) => {
           newGrid.cells(y)(x) = ExitCell(exitId, Cell.emptySignal)
-          staticSmellFloor(y)(x) = grid.cells(y)(x).smell
-        }
-        case PersonCell(_) => { // TODO to delete
-          newGrid.cells(y)(x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
           staticSmellFloor(y)(x) = grid.cells(y)(x).smell
         }
         case Obstacle => {
@@ -273,7 +243,8 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     }
 
     def simulateEvacuation(): Unit = {
-      val (dynamicCells, staticCells) = getDynamicAndStaticCellsShuffled() // getDynamicAndStaticCells() getDynamicAndStaticCellsShuffled()
+      // version deterministic and random
+      val (dynamicCells, staticCells) = getDynamicAndStaticCells() // getDynamicAndStaticCells() getDynamicAndStaticCellsShuffled()
 
       staticCells.foreach({
         case (x, y, Obstacle) => newGrid.cells(x)(y) = Obstacle
@@ -287,10 +258,13 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     }
 
     def movePersonCell(cellY: Int, cellX: Int, cell: PersonCell): Unit = {
+      // moving version -- one more change to do! see below
+//      val destinations = calculatePossibleDestinations(cell, cellY, cellX, grid) // old grid
+//      val destination = selectDestinationCell(destinations, newGrid)
+
+      // not moving version -- one more change to do! see below
       val destinations = calculatePossibleDestinations(cell, cellY, cellX, grid) // old grid
-      val destination = selectDestinationCell(destinations, newGrid)
-        // destinations.collectFirstOpt { case (i, j, cellInOldGrid) => (i, j, cellInOldGrid)}
-      // selectDestinationCell(destinations, newGrid) // newGrid
+      val destination = destinations.collectFirstOpt { case (i, j, cellInOldGrid) => (i, j, cellInOldGrid)} // selectDestinationCell(destinations, newGrid) // newGrid
 
       destination match {
         case Opt((i, j, PersonAccessible(destination))) => {
@@ -345,8 +319,11 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
               newGrid.cells(cellY)(cellX) = cell
             }
             case _ => {
-              // newGrid.cells(cellY)(cellX) = cell
-              throw new RuntimeException(s"Person selected inaccessible destination ($i,$j): $inaccessibleDestination")
+              // not moving version -- one more change to do! see above
+              newGrid.cells(cellY)(cellX) = cell
+
+              // moving version  -- one more change to do! see above
+              // throw new RuntimeException(s"Person selected inaccessible destination ($i,$j): $inaccessibleDestination")
             }
           }
         case Opt.Empty => {
@@ -363,6 +340,10 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
       Grid.SubcellCoordinates
         .map { case (i, j) => {
+          if (staticSmellFloor(cellY)(cellX) == null) {
+            println(i + ' ' + j + ' ')
+            println(staticSmellFloor(cellY)(cellX))
+          }
           val tmp = staticSmellFloor(cellY)(cellX)(i)(j)
           cell.smell(i)(j) + staticSmellFloor(cellY)(cellX)(i)(j)
           }
@@ -385,48 +366,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
         }
     }
 
-//    def createSmellSources(): Unit = {
-//      for (smellOrigin <- buildingMap.smellOrigins) {
-//        grid.cells(smellOrigin.y)(smellOrigin.x) =
-//          EvacuationDirectionCell.create(config.evacuationDirectionInitialSignal, false, EvacuationDirectionSmellStrength.Strong)
-//      }
-//    }
-//
-//    def createExitCells(): Unit = {
-//      for (smellOrigin <- buildingMap.exits) {
-//        val signal: Signal = smellOrigin._2 match {
-//          case EvacuationDirectionSmellStrength.Strong => config.evacuationDirectionInitialSignal
-//          case EvacuationDirectionSmellStrength.Medium => config.evacuationDirectionInitialSignalMedium
-//          case EvacuationDirectionSmellStrength.Weak => config.evacuationDirectionInitialSignalWeak
-//          case _ => config.evacuationDirectionInitialSignal
-//        }
-//        grid.cells(smellOrigin._1.y)(smellOrigin._1.x) =
-//          EvacuationDirectionCell.create(signal, true, smellOrigin._2)
-//      }
-//    }
-//
-//
-//
-//    def removeEgressRoutsBorderPoints(): Unit = {
-//      for (point <- buildingMap.egressRoutesBordersPoints) {
-//        grid.cells(point.y)(point.x) = EmptyCell(Cell.emptySignal)
-//      }
-//    }
-//
     if (iteration < boundaryIterationNo) {
-//      if (iteration == 5)
-//        createSmellSources()
-//
-//      else if (iteration == createExitsIterationNo)
-//        createExitCells()
-//
-//      else if (iteration == createLeftUpperExitIterationNo)
-//        grid.cells(buildingMap.exitA._1.y)(buildingMap.exitA._1.x) =
-//          EvacuationDirectionCell.create(config.evacuationDirectionInitialSignal, true, buildingMap.exitA._2)
-//
-//      else if (iteration == boundaryIterationNo - 2)
-//        removeEgressRoutsBorderPoints()
-//
       propagateInitialSmell()
     }
     else if (iteration == boundaryIterationNo) {
@@ -435,8 +375,6 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     }
     else {
       simulateEvacuation()
-//      if (iteration < allPeoplePlacedOnGridIterationNoInitialAlarm) placePeopleOnGridLinearInitialAlarm()
-//      if (iteration >= startSecondPhaseOfEvacuationIterationNo && iteration < allPeoplePlacedOnGridIterationNoGeneralAlarm)
       people.groupedAvailablePointsWithPeopleNo.level4 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level4)
       people.groupedAvailablePointsWithPeopleNo.level3Main = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level3Main)
       people.groupedAvailablePointsWithPeopleNo.level3Side = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level3Side)
@@ -444,48 +382,40 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
       people.groupedAvailablePointsWithPeopleNo.level1 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level1)
       people.groupedAvailablePointsWithPeopleNo.cloakroom = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.cloakroom)
     }
-//
-//    def printPeopleEvacuatedAndOnGridNumber(): Unit = {
-//
-//      def getNumberOfPeopleOnGrid(): Int = {
-//        val (personCells, _) = (for {
-//          y <- 0 until config.gridSize
-//          x <- 0 until config.gridSize
-//        } yield (x, y, newGrid.cells(x)(y))).partition({
-//          case (_, _, PersonCell(_)) =>
-//            true
-//          case (_, _, _) => false
-//        })
-//
-//        personCells.length
-//      }
-//
-//      val evacuatedCount =
-//        evacuatedCounterByDoorId(0) +
-//          evacuatedCounterByDoorId(1) +
-//          evacuatedCounterByDoorId(2) +
-//          evacuatedCounterByDoorId(3) +
-//          evacuatedCounterByDoorId(4) +
-//          evacuatedCounterByDoorId(5)
-//      val peopleCount = getNumberOfPeopleOnGrid()
-//
-//      println(iteration + ": " + peopleCount + " " + evacuatedCount + " " + (peopleCount + evacuatedCount))
-//    }
-//
-//   // printPeopleEvacuatedAndOnGridNumber()
-//
-//
-//    val metrics = EvacuationMetrics(
-//      evacuatedCounterByDoorId(0),
-//      evacuatedCounterByDoorId(1),
-//      evacuatedCounterByDoorId(2),
-//      evacuatedCounterByDoorId(3),
-//      evacuatedCounterByDoorId(4),
-//      evacuatedCounterByDoorId(5)
-//    )
 
-   // tmpCopyFunc()
-    val metrics = EvacuationMetrics(0, 0, 0, 0, 0, 0)
+    def printPeopleEvacuatedAndOnGridNumber(): Unit = {
+
+      def getNumberOfPeopleOnGrid(): Int = {
+        val (personCells, _) = (for {
+          y <- 0 until config.gridSize
+          x <- 0 until config.gridSize
+        } yield (x, y, newGrid.cells(x)(y))).partition({
+          case (_, _, PersonCell(_)) =>
+            true
+          case (_, _, _) => false
+        })
+
+        personCells.length
+      }
+
+      val evacuatedCount =
+        evacuatedCounterByDoorId(0) +
+          evacuatedCounterByDoorId(1) +
+          evacuatedCounterByDoorId(2) +
+          evacuatedCounterByDoorId(3)
+      val peopleCount = getNumberOfPeopleOnGrid()
+
+      println(iteration + ": " + peopleCount + " " + evacuatedCount + " " + (peopleCount + evacuatedCount))
+    }
+
+    printPeopleEvacuatedAndOnGridNumber()
+
+    val metrics = EvacuationMetrics(
+      evacuatedCounterByDoorId(0),
+      evacuatedCounterByDoorId(1),
+      evacuatedCounterByDoorId(2),
+      evacuatedCounterByDoorId(3)
+    )
 
     (newGrid, metrics)
   }

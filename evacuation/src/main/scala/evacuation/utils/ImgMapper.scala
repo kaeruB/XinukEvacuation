@@ -75,13 +75,12 @@ object ImgMapper {
       new Color(img.getRGB(x, y)) match {
         case color if color == white =>
         case color if color == black => grid.cells(y)(x) = Obstacle
-        case color if color == exit1 => grid.cells(y)(x) = ExitCell(1, Cell.emptySignal)
-        case color if color == exit2 => grid.cells(y)(x) = ExitCell(2, Cell.emptySignal)
-        case color if color == exit3 => grid.cells(y)(x) = ExitCell(3, Cell.emptySignal)
-        case color if color == exit4 => grid.cells(y)(x) = ExitCell(4, Cell.emptySignal)
-          // TODO EvacuationDirectionCell -> ustaw exit na true jesli jest wyjsciem!
+        case color if color == exit1 => grid.cells(y)(x) = ExitCell(0, Cell.emptySignal)
+        case color if color == exit2 => grid.cells(y)(x) = ExitCell(1, Cell.emptySignal)
+        case color if color == exit3 => grid.cells(y)(x) = ExitCell(2, Cell.emptySignal)
+        case color if color == exit4 => grid.cells(y)(x) = ExitCell(3, Cell.emptySignal)
         case color if color == smellSources => grid.cells(y)(x) = EvacuationDirectionCell.create(config.evacuationDirectionInitialSignal, false, EvacuationDirectionSmellStrength.Strong)
-        case _ => println("blad")
+        case _ => // println("blad")
       }
     }
     grid
@@ -114,7 +113,7 @@ object ImgMapper {
         case color if color == teleportation4b => teleportationPairs(7) = new PointPair(new Point(y, x), teleportationPairs(7).point2)
         case color if color == teleportation5a => teleportationPairs(8) = new PointPair(new Point(y, x), teleportationPairs(8).point2)
         case color if color == teleportation5b => teleportationPairs(9) = new PointPair(new Point(y, x), teleportationPairs(9).point2)
-        case _ => println("blad")
+        case _ => //println("blad")
       }
       // map teleportation destinations
       new Color(teleportationDestinationsImgParsed.getRGB(x, y)) match {
@@ -129,7 +128,7 @@ object ImgMapper {
         case color if color == teleportation4b => teleportationPairs(7) = new PointPair(teleportationPairs(7).point1, new Point(y, x))
         case color if color == teleportation5a => teleportationPairs(8) = new PointPair(teleportationPairs(8).point1, new Point(y, x))
         case color if color == teleportation5b => teleportationPairs(9) = new PointPair(teleportationPairs(9).point1, new Point(y, x))
-        case _ => println("blad")
+        case _ => // println("blad")
       }
     }
 
@@ -150,7 +149,7 @@ object ImgMapper {
         case color if color == black => {
           pointsList = new Point(y, x) :: pointsList
         }
-        case _ => println("blad")
+        case _ => // println("blad")
       }
     }
 
