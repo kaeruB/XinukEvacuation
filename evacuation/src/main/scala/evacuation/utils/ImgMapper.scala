@@ -67,7 +67,6 @@ object ImgMapper {
   def mapImgToGrid(name: String, grid: Grid)(implicit config: EvacuationConfig): Grid = {
     val img = loadImg(name)
 
-
     for {
       x <- grid.cells.indices
       y <- grid.cells.indices
@@ -165,5 +164,26 @@ object ImgMapper {
   def similarTo(color: Color, similarToColor: Color) = {
     val distance = colorDistance(color, similarToColor)
     distance < 200
+  }
+
+  def getBottomDoorsPoints(name: String)(implicit config: EvacuationConfig): List[Point] = {
+    val img = loadImg(name)
+    var pointsList: List[Point] = List.empty
+
+    for {
+      x <- 0 until config.gridSize
+      y <- 0 until config.gridSize
+    } {
+
+      new Color(img.getRGB(x, y)) match {
+        case color if color == white =>
+        case color if color == black => {
+          pointsList = new Point(y, x) :: pointsList
+        }
+        case _ => // println("blad")
+      }
+    }
+
+    pointsList
   }
 }

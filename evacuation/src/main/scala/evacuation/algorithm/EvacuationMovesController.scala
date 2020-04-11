@@ -20,19 +20,27 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
   val people: PeopleInRooms = new PeopleInRooms()
 
-  val boundaryIterationNo = 14
+  val initialSmellPropagationMaxIteration = 14
+  val initialSmellPropagationWithBottomDoorsClosedMaxIteration = 35
+  val openBottomDoorsIterationNo = 70
+
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
+  var staticSmellFloorWithBottomDoorClosed: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
 
   val exitsNo: Int = 4
   var evacuatedCounterByDoorId: Array[Int] = Array.ofDim[Int](exitsNo)
 
   val teleportationPairs: Array[PointPair] = ImgMapper.mapImgToTeleportationPairs("img/teleport_starts.png", "img/teleport_ends.png")
 
+  var initialGridCopy: Grid = Grid.empty(bufferZone)
+  val bottomDoorsPoints: List[Point] = ImgMapper.getBottomDoorsPoints("img/bottom_doors.png")
+
   override def initialGrid: (Grid, EvacuationMetrics) = {
     var grid = Grid.empty(bufferZone)
     val metrics = EvacuationMetrics(0, 0, 0, 0)
 
     grid = ImgMapper.mapImgToGrid("img/d17.png", grid)
+    initialGridCopy = grid
 
 //    def placePeopleOnGrid(): Unit = {
 //      people.peopleInRooms.peopleICloakroom.foreach(point => {
@@ -99,7 +107,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
 
   override def makeMoves(iteration: Long, grid: Grid): (Grid, EvacuationMetrics) = {
-    val newGrid = Grid.empty(bufferZone)
+    var newGrid = Grid.empty(bufferZone)
 
     def copyCells(x: Int, y: Int, cell: GridPart): Unit = {
       newGrid.cells(x)(y) = cell
@@ -143,11 +151,9 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
         y <- 0 until config.gridSize
       }  grid.cells(y)(x) match {
         case EvacuationDirectionCell(_, _, _) => {
-          newGrid.cells(y)(x) = EmptyCell.Instance
           staticSmellFloor(y)(x) = grid.cells(y)(x).smell
         }
         case ExitCell(exitId, _) => {
-          newGrid.cells(y)(x) = ExitCell(exitId, Cell.emptySignal)
           staticSmellFloor(y)(x) = grid.cells(y)(x).smell
         }
         case Obstacle => {
@@ -157,9 +163,48 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
           staticSmellFloor(y)(x) = grid.cells(y)(x).smell
         }
       }
+    }
+
+    def resetSmellOnGrid(): Unit = {
+      newGrid = initialGridCopy
+    }
+
+    def placeBottomDoors(): Unit = {
+      bottomDoorsPoints.foreach(point => {
+        newGrid.cells(point.y)(point.x) = Obstacle
+      })
+    }
+
+    def removeBottomDoor(): Unit = {
+      bottomDoorsPoints.foreach(point => {
+        newGrid.cells(point.y)(point.x) = EmptyCell.Instance
+      })
+    }
+
+    def createSmellSnapshotWithBottomDoorClosed(): Unit = {
+      for {
+        x <- 0 until config.gridSize
+        y <- 0 until config.gridSize
+      }  grid.cells(y)(x) match {
+        case EvacuationDirectionCell(_, _, _) => {
+          newGrid.cells(y)(x) = EmptyCell.Instance
+          staticSmellFloorWithBottomDoorClosed(y)(x) = grid.cells(y)(x).smell
+        }
+        case ExitCell(exitId, _) => {
+          newGrid.cells(y)(x) = ExitCell(exitId, Cell.emptySignal)
+          staticSmellFloorWithBottomDoorClosed(y)(x) = grid.cells(y)(x).smell
+        }
+        case Obstacle => {
+          newGrid.cells(y)(x) = grid.cells(y)(x)
+        }
+        case _ => {
+          staticSmellFloorWithBottomDoorClosed(y)(x) = grid.cells(y)(x).smell
+        }
+      }
 
       placeTeleportationPairsOnGrid()
     }
+
 
     def placeTeleportationPairsOnGrid(): Unit = {
       for (i <- teleportationPairs.indices) {
@@ -340,12 +385,12 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
       Grid.SubcellCoordinates
         .map { case (i, j) => {
-          if (staticSmellFloor(cellY)(cellX) == null) {
-            println(i + ' ' + j + ' ')
-            println(staticSmellFloor(cellY)(cellX))
-          }
-          val tmp = staticSmellFloor(cellY)(cellX)(i)(j)
-          cell.smell(i)(j) + staticSmellFloor(cellY)(cellX)(i)(j)
+            if (iteration < openBottomDoorsIterationNo) {
+              cell.smell(i)(j) + staticSmellFloorWithBottomDoorClosed(cellY)(cellX)(i)(j)
+            }
+            else {
+              cell.smell(i)(j) + staticSmellFloor(cellY)(cellX)(i)(j)
+            }
           }
         }
         .zipWithIndex
@@ -366,12 +411,19 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
         }
     }
 
-    if (iteration < boundaryIterationNo) {
+    if (iteration < initialSmellPropagationMaxIteration) {
       propagateInitialSmell()
     }
-    else if (iteration == boundaryIterationNo) {
+    else if (iteration == initialSmellPropagationMaxIteration) {
       createSmellSnapshot()
-//      placePeopleOnGridLinearInitialAlarm()
+      resetSmellOnGrid()
+      placeBottomDoors()
+    }
+    else if (iteration < initialSmellPropagationWithBottomDoorsClosedMaxIteration) {
+      propagateInitialSmell()
+    }
+    else if (iteration == initialSmellPropagationWithBottomDoorsClosedMaxIteration) {
+      createSmellSnapshotWithBottomDoorClosed()
     }
     else {
       simulateEvacuation()
@@ -381,6 +433,10 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
       people.groupedAvailablePointsWithPeopleNo.level2 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level2)
       people.groupedAvailablePointsWithPeopleNo.level1 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level1)
       people.groupedAvailablePointsWithPeopleNo.cloakroom = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.cloakroom)
+
+      if (iteration == openBottomDoorsIterationNo) {
+        removeBottomDoor()
+      }
     }
 
     def printPeopleEvacuatedAndOnGridNumber(): Unit = {
