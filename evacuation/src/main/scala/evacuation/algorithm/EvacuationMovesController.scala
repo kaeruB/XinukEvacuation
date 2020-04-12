@@ -22,7 +22,14 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
   val initialSmellPropagationMaxIteration = 14
   val initialSmellPropagationWithBottomDoorsClosedMaxIteration = 35
-  val openBottomDoorsIterationNo = 70
+
+  val level4EvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 63// + 31
+  val level2EvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 195 // 97
+  val level3MainEvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 223 // 111
+  val level3SideEvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 230 // 115
+  val Level1EvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 251 // 125
+  val openBottomDoorsIterationNo = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 259 // 129
+  val CloakroomEvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 404 // 202
 
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
   var staticSmellFloorWithBottomDoorClosed: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
@@ -427,15 +434,27 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     }
     else {
       simulateEvacuation()
-      people.groupedAvailablePointsWithPeopleNo.level4 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level4)
-      people.groupedAvailablePointsWithPeopleNo.level3Main = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level3Main)
-      people.groupedAvailablePointsWithPeopleNo.level3Side = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level3Side)
-      people.groupedAvailablePointsWithPeopleNo.level2 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level2)
-      people.groupedAvailablePointsWithPeopleNo.level1 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level1)
-      people.groupedAvailablePointsWithPeopleNo.cloakroom = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.cloakroom)
 
+      if (iteration >= level4EvacuationStartIteration) {
+        people.groupedAvailablePointsWithPeopleNo.level4 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level4)
+      }
+      if (iteration >= level2EvacuationStartIteration) {
+        people.groupedAvailablePointsWithPeopleNo.level2 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level2)
+      }
+      if (iteration >= level3MainEvacuationStartIteration) {
+        people.groupedAvailablePointsWithPeopleNo.level3Main = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level3Main)
+      }
+      if (iteration >= level3SideEvacuationStartIteration) {
+        people.groupedAvailablePointsWithPeopleNo.level3Side = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level3Side)
+      }
+      if (iteration >= Level1EvacuationStartIteration) {
+        people.groupedAvailablePointsWithPeopleNo.level1 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level1)
+      }
       if (iteration == openBottomDoorsIterationNo) {
         removeBottomDoor()
+      }
+      if (iteration >= CloakroomEvacuationStartIteration) {
+        people.groupedAvailablePointsWithPeopleNo.cloakroom = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.cloakroom)
       }
     }
 
