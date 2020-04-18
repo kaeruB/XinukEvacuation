@@ -36,22 +36,6 @@ object ImgMapper {
     new Color(125, 125, 255),
   )
 
-//  def getBuildingMapBasedOnImages(): BuildingMap = {
-//    val buildingMap: BuildingMap = new BuildingMap(
-//
-//      wallsPoints: List[Point],
-//      smellOrigins: Array[Point],
-//      exits: Array[(Point, EvacuationDirectionSmellStrength, Int)],
-//      people: Array[PointPair],
-//      teleportationPairs: Array[PointPair]
-//    )
-//    // wall points - ok
-//    // people points - ok
-//    // teleportation pairs - ok
-//    // smell origins - ok
-//    // exit points - ok
-//  }
-
   def loadImg(name: String)(implicit config: EvacuationConfig): BufferedImage = {
     println(name)
     val img = ImageIO.read(getClass.getClassLoader.getResource(name))

@@ -23,13 +23,41 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
   val initialSmellPropagationMaxIteration = 14
   val initialSmellPropagationWithBottomDoorsClosedMaxIteration = 35
 
-  val level4EvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 63// + 31
-  val level2EvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 195 // 97
-  val level3MainEvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 223 // 111
-  val level3SideEvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 230 // 115
-  val Level1EvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 251 // 125
-  val openBottomDoorsIterationNo = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 259 // 129
-  val CloakroomEvacuationStartIteration = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 404 // 202
+  val level4EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +  78
+  val level2EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 243
+  val level3MainEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 278
+  val level3SideEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 287
+  val Level1EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 313
+  val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 323
+  val CloakroomEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 505
+
+// 0,9:
+//  70
+//  216
+//  247
+//  255
+//  278
+//  287
+//  448
+
+// 0,8
+//  78
+//  243
+//  278
+//  287
+//  313
+//  323
+//  505
+
+
+// 0,7
+//  90
+//  278
+//  318
+//  328
+//  358
+//  370
+//  577
 
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
   var staticSmellFloorWithBottomDoorClosed: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
@@ -296,7 +324,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
     def simulateEvacuation(): Unit = {
       // version deterministic and random
-      val (dynamicCells, staticCells) = getDynamicAndStaticCells() // getDynamicAndStaticCells() getDynamicAndStaticCellsShuffled()
+      val (dynamicCells, staticCells) = getDynamicAndStaticCellsShuffled() // getDynamicAndStaticCells() getDynamicAndStaticCellsShuffled()
 
       staticCells.foreach({
         case (x, y, Obstacle) => newGrid.cells(x)(y) = Obstacle
@@ -311,12 +339,12 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
     def movePersonCell(cellY: Int, cellX: Int, cell: PersonCell): Unit = {
       // moving version -- one more change to do! see below
-//      val destinations = calculatePossibleDestinations(cell, cellY, cellX, grid) // old grid
-//      val destination = selectDestinationCell(destinations, newGrid)
-
-      // not moving version -- one more change to do! see below
       val destinations = calculatePossibleDestinations(cell, cellY, cellX, grid) // old grid
-      val destination = destinations.collectFirstOpt { case (i, j, cellInOldGrid) => (i, j, cellInOldGrid)} // selectDestinationCell(destinations, newGrid) // newGrid
+      val destination = selectDestinationCell(destinations, newGrid)
+
+      // standing version -- one more change to do! see below
+//      val destinations = calculatePossibleDestinations(cell, cellY, cellX, grid) // old grid
+//      val destination = destinations.collectFirstOpt { case (i, j, cellInOldGrid) => (i, j, cellInOldGrid)} // selectDestinationCell(destinations, newGrid) // newGrid
 
       destination match {
         case Opt((i, j, PersonAccessible(destination))) => {
@@ -371,11 +399,11 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
               newGrid.cells(cellY)(cellX) = cell
             }
             case _ => {
-              // not moving version -- one more change to do! see above
-              newGrid.cells(cellY)(cellX) = cell
+              //standing  version -- one more change to do! see above
+              // newGrid.cells(cellY)(cellX) = cell
 
               // moving version  -- one more change to do! see above
-              // throw new RuntimeException(s"Person selected inaccessible destination ($i,$j): $inaccessibleDestination")
+              throw new RuntimeException(s"Person selected inaccessible destination ($i,$j): $inaccessibleDestination")
             }
           }
         case Opt.Empty => {
@@ -389,7 +417,6 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
     def calculatePossibleDestinations(cell: PersonCell, cellY: Int, cellX: Int, grid: Grid): Iterator[(Int, Int, GridPart)] = {
       val neighbourCellCoordinates = Grid.neighbourCellCoordinates(cellY, cellX)
-
       Grid.SubcellCoordinates
         .map { case (i, j) => {
             if (iteration < openBottomDoorsIterationNo) {
