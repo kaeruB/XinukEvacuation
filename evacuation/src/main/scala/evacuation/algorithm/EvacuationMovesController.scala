@@ -23,13 +23,13 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
   val initialSmellPropagationMaxIteration = 14
   val initialSmellPropagationWithBottomDoorsClosedMaxIteration = 35
 
-  val level4EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +  78
-  val level2EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 243
-  val level3MainEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 278
-  val level3SideEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 287
-  val Level1EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 313
-  val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 323
-  val CloakroomEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 505
+  val level4EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   70
+  val level2EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   216
+  val level3MainEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   247
+  val level3SideEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   255
+  val Level1EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   278
+  val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   287
+  val CloakroomEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   448
 
 // 0,9:
 //  70
