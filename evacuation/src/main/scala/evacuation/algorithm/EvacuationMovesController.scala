@@ -77,65 +77,6 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     grid = ImgMapper.mapImgToGrid("img/d17.png", grid)
     initialGridCopy = grid
 
-//    def placePeopleOnGrid(): Unit = {
-//      people.peopleInRooms.peopleICloakroom.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleICorridor.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleII241.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIICorridor.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIII323.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIII324.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIII327a.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIII327b.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIII327c.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIII327d.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIII327e.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIIICorridor.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIV426.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIV428.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIV429.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIV430.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIV431.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//      people.peopleInRooms.peopleIVCorridor.foreach(point => {
-//        grid.cells(point.y)(point.x) = PersonAccessible.unapply(EmptyCell.Instance).withPerson()
-//      })
-//    }
-//
-//    placePeopleOnGrid()
-
     (grid, metrics)
   }
 
