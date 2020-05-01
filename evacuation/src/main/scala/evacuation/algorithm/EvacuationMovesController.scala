@@ -23,13 +23,13 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
   val initialSmellPropagationMaxIteration = 14
   val initialSmellPropagationWithBottomDoorsClosedMaxIteration = 35
 
-  val level4EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   78
-  val level2EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   243
-  val level3MainEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   278
-  val level3SideEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   287
-  val Level1EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   313
-  val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   323
-  val CloakroomEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   505
+  val level4EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   115
+  val level2EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +    355
+  val level3MainEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +    405
+  val level3SideEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +    418
+  val Level1EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +    456
+  val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +    471
+  val CloakroomEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +    735
 
 // 0,9:
 //  70
@@ -58,6 +58,15 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 //  358
 //  370
 //  577
+
+  // 0,55
+//  115
+//  355
+//  405
+//  418
+//  456
+//  471
+//  735
 
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
   var staticSmellFloorWithBottomDoorClosed: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
