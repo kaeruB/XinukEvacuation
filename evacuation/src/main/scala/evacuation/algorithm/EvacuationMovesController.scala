@@ -23,41 +23,27 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
   val initialSmellPropagationMaxIteration = 14
   val initialSmellPropagationWithBottomDoorsClosedMaxIteration = 35
 
-  val level4EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   70
-  val level2EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   216
-  val level3MainEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   247
-  val level3SideEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   255
-  val Level1EvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   278
-  val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   287
-  val CloakroomEvacuationStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +   448
+  val peopleICloakroomStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 449
+  val peopleICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 279
+  val peopleII241StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 200
+  val peopleIICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 202
+  val peopleIII323StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 228
+  val peopleIII324StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 253
+  val peopleIII327aStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 311
+  val peopleIII327bStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 267
+  val peopleIII327cStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 239
+  val peopleIII327dStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 369
+  val peopleIII327eStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 282
+  val peopleIIICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 248
+  val peopleIIICorridorFastStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 17
+  val peopleIV426StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 233
+  val peopleIV428StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 222
+  val peopleIV429StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 74
+  val peopleIV430StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 264
+  val peopleIV431StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 70
+  val peopleIVCorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 241
+  val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 288
 
-// 0,9:
-//  70
-//  216
-//  247
-//  255
-//  278
-//  287
-//  448
-
-// 0,8
-//  78
-//  243
-//  278
-//  287
-//  313
-//  323
-//  505
-
-
-// 0,7
-//  90
-//  278
-//  318
-//  328
-//  358
-//  370
-//  577
 
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
   var staticSmellFloorWithBottomDoorClosed: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
@@ -403,27 +389,68 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     else {
       simulateEvacuation()
 
-      if (iteration >= level4EvacuationStartIteration) {
-        people.groupedAvailablePointsWithPeopleNo.level4 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level4)
+      if (iteration >= peopleICloakroomStartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleICloakroom = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleICloakroom)
       }
-      if (iteration >= level2EvacuationStartIteration) {
-        people.groupedAvailablePointsWithPeopleNo.level2 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level2)
+      if (iteration >= peopleICorridorStartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleICorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleICorridor)
       }
-      if (iteration >= level3MainEvacuationStartIteration) {
-        people.groupedAvailablePointsWithPeopleNo.level3Main = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level3Main)
+      if (iteration >= peopleII241StartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleII241 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleII241)
       }
-      if (iteration >= level3SideEvacuationStartIteration) {
-        people.groupedAvailablePointsWithPeopleNo.level3Side = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level3Side)
+      if (iteration >= peopleIICorridorStartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIICorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIICorridor)
       }
-      if (iteration >= Level1EvacuationStartIteration) {
-        people.groupedAvailablePointsWithPeopleNo.level1 = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.level1)
+      if (iteration >= peopleIII323StartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIII323 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII323)
       }
+      if (iteration >= peopleIII324StartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIII324 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII324)
+      }
+      if (iteration >= peopleIII327aStartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIII327a = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327a)
+      }
+      if (iteration >= peopleIII327bStartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIII327b = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327b)
+      }
+      if (iteration >= peopleIII327cStartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIII327c = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327c)
+      }
+      if (iteration >= peopleIII327dStartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIII327d = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327d)
+      }
+      if (iteration >= peopleIII327eStartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIII327e = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327e)
+      }
+      if (iteration >= peopleIIICorridorStartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridor)
+      }
+      if (iteration >= peopleIIICorridorFastStartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridorFast = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridorFast)
+      }
+      if (iteration >= peopleIV426StartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIV426 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV426)
+      }
+      if (iteration >= peopleIV428StartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIV428 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV428)
+      }
+      if (iteration >= peopleIV429StartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIV429 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV429)
+      }
+      if (iteration >= peopleIV430StartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIV430 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV430)
+      }
+      if (iteration >= peopleIV431StartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIV431 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV431)
+      }
+      if (iteration >= peopleIVCorridorStartIteration) {
+        people.notGroupedAvailablePointsWithPeopleNo.peopleIVCorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIVCorridor)
+      }
+
       if (iteration == openBottomDoorsIterationNo) {
         removeBottomDoor()
       }
-      if (iteration >= CloakroomEvacuationStartIteration) {
-        people.groupedAvailablePointsWithPeopleNo.cloakroom = placePeopleOnGridLinear(people.groupedAvailablePointsWithPeopleNo.cloakroom)
-      }
+
     }
 
     def printPeopleEvacuatedAndOnGridNumber(): Unit = {

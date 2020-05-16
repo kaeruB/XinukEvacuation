@@ -32,6 +32,7 @@ final case class EvacuationConfig(
                                    peopleNoIII327d: Int,
                                    peopleNoIII327e: Int,
                                    peopleNoIIICorridor: Int,
+                                   peopleNoIIICorridorFast: Int,
                                    peopleNoIV426: Int,
                                    peopleNoIV428: Int,
                                    peopleNoIV429: Int,
