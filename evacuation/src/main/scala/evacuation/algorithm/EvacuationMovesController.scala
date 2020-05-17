@@ -23,26 +23,26 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
   val initialSmellPropagationMaxIteration = 14
   val initialSmellPropagationWithBottomDoorsClosedMaxIteration = 35
 
-  val peopleICloakroomStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 449
-  val peopleICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 279
-  val peopleII241StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 200
-  val peopleIICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 202
-  val peopleIII323StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 228
-  val peopleIII324StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 253
-  val peopleIII327aStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 311
-  val peopleIII327bStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 267
-  val peopleIII327cStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 239
-  val peopleIII327dStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 369
-  val peopleIII327eStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 282
-  val peopleIIICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 248
-  val peopleIIICorridorFastStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 17
-  val peopleIV426StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 233
-  val peopleIV428StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 222
-  val peopleIV429StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 74
-  val peopleIV430StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 264
-  val peopleIV431StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 70
-  val peopleIVCorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 241
-  val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 288
+  val peopleICloakroomStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +673
+  val peopleICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +418
+  val peopleII241StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +300
+  val peopleIICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +303
+  val peopleIII323StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +342
+  val peopleIII324StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +380
+  val peopleIII327aStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +467
+  val peopleIII327bStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +400
+  val peopleIII327cStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +358
+  val peopleIII327dStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +553
+  val peopleIII327eStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +423
+  val peopleIIICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +372
+  val peopleIIICorridorFastStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 25
+  val peopleIV426StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +350
+  val peopleIV428StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +333
+  val peopleIV429StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +112
+  val peopleIV430StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +397
+  val peopleIV431StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +105
+  val peopleIVCorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +362
+  val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +432
 
 
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
