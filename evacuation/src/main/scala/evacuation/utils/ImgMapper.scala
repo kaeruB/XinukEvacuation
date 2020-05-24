@@ -170,4 +170,25 @@ object ImgMapper {
 
     pointsList
   }
+
+  def mapStairsImgToPoints(name: String)(implicit config: EvacuationConfig): List[Point]  = {
+    val img = loadImg(name)
+    var pointsList: List[Point] = List.empty
+
+    for {
+      x <- 0 until config.gridSize
+      y <- 0 until config.gridSize
+    } {
+
+      new Color(img.getRGB(x, y)) match {
+        case color if color == white =>
+        case color if color == black => {
+          pointsList = new Point(y, x) :: pointsList
+        }
+        case _ => // println("blad")
+      }
+    }
+
+    pointsList
+  }
 }

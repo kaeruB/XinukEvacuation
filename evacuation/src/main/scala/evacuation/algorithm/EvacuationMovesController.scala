@@ -21,29 +21,30 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
   val people: PeopleInRooms = new PeopleInRooms()
 
   val initialSmellPropagationMaxIteration = 14
-  val initialSmellPropagationWithBottomDoorsClosedMaxIteration = 35
+  val initialSmellPropagationWithBottomDoorsClosedMaxIteration = 29
 
-  val peopleICloakroomStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 449
-  val peopleICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 279
-  val peopleII241StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 200
-  val peopleIICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 202
-  val peopleIII323StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 228
-  val peopleIII324StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 253
-  val peopleIII327aStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 311
-  val peopleIII327bStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 267
-  val peopleIII327cStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 239
-  val peopleIII327dStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 369
-  val peopleIII327eStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 282
-  val peopleIIICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 248
-  val peopleIIICorridorFastStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 17
-  val peopleIV426StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 233
-  val peopleIV428StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 222
-  val peopleIV429StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 74
-  val peopleIV430StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 264
-  val peopleIV431StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 70
-  val peopleIVCorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 241
-  val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 288
+  val peopleICloakroomStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 808
+  val peopleICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 502
+  val peopleII241StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 360
+  val peopleIICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 364
+  val peopleIII323StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 410
+  val peopleIII324StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 456
+  val peopleIII327aStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 560
+  val peopleIII327bStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 480
+  val peopleIII327cStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 430
+  val peopleIII327dStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 664
+  val peopleIII327eStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 508
+  val peopleIIICorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 446
+  val peopleIIICorridorFastStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +30
+  val peopleIV426StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 420
+  val peopleIV428StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 400
+  val peopleIV429StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +134
+  val peopleIV430StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 476
+  val peopleIV431StartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration +126
+  val peopleIVCorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 434
+  val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 518
 
+  val timesSlower = 4
 
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
   var staticSmellFloorWithBottomDoorClosed: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
@@ -55,6 +56,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
   var initialGridCopy: Grid = Grid.empty(bufferZone)
   val bottomDoorsPoints: List[Point] = ImgMapper.getBottomDoorsPoints("img/bottom_doors.png")
+  val stairs: List[Point] = ImgMapper.mapStairsImgToPoints("img/stairs.png")
 
   override def initialGrid: (Grid, EvacuationMetrics) = {
     var grid = Grid.empty(bufferZone)
@@ -309,7 +311,15 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
             case EmptyCell(_) => {
               // check if newGrid is empty, if yes - go, if not - stay
               newGrid.cells(i)(j) match {
-                case EmptyCell(_) => newGrid.cells(i)(j) = cell
+                case EmptyCell(_) => {
+                  // if the person is on stairs and iteration is an even number - don't move (on stairs, speed is timesSlower times lower)
+                  if (stairs.exists(point => point.y == cellY && point.x == cellX) && iteration % timesSlower == 0) {
+                    newGrid.cells(cellY)(cellX) = cell
+                  }
+                  else {
+                    newGrid.cells(i)(j) = cell
+                  }
+                }
                 case _ => newGrid.cells(cellY)(cellX) = cell
               }
             }
