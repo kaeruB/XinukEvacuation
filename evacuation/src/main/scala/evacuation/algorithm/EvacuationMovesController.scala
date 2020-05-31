@@ -44,8 +44,6 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
   val peopleIVCorridorStartIteration: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 395
   val openBottomDoorsIterationNo: Int = initialSmellPropagationWithBottomDoorsClosedMaxIteration + 471
 
-  val timesSlower = 8
-
   var staticSmellFloor: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
   var staticSmellFloorWithBottomDoorClosed: Array[Array[SmellArray]] = Array.ofDim[SmellArray](config.gridSize, config.gridSize)
 
@@ -312,13 +310,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
               // check if newGrid is empty, if yes - go, if not - stay
               newGrid.cells(i)(j) match {
                 case EmptyCell(_) => {
-                  // if the person is on stairs and iteration is an even number - don't move (on stairs, speed is timesSlower times lower)
-                  if (stairs.exists(point => point.y == cellY && point.x == cellX) && iteration % timesSlower == 0) {
-                    newGrid.cells(cellY)(cellX) = cell
-                  }
-                  else {
                     newGrid.cells(i)(j) = cell
-                  }
                 }
                 case _ => newGrid.cells(cellY)(cellX) = cell
               }
@@ -398,65 +390,65 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
     }
     else {
       simulateEvacuation()
-
-      if (iteration >= peopleICloakroomStartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleICloakroom = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleICloakroom)
+      if (iteration % 2 == 0) {
+        if (iteration >= peopleICloakroomStartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleICloakroom = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleICloakroom)
+        }
+        if (iteration >= peopleICorridorStartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleICorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleICorridor)
+        }
+        if (iteration >= peopleII241StartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleII241 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleII241)
+        }
+        if (iteration >= peopleIICorridorStartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIICorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIICorridor)
+        }
+        if (iteration >= peopleIII323StartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIII323 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII323)
+        }
+        if (iteration >= peopleIII324StartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIII324 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII324)
+        }
+        if (iteration >= peopleIII327aStartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIII327a = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327a)
+        }
+        if (iteration >= peopleIII327bStartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIII327b = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327b)
+        }
+        if (iteration >= peopleIII327cStartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIII327c = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327c)
+        }
+        if (iteration >= peopleIII327dStartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIII327d = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327d)
+        }
+        if (iteration >= peopleIII327eStartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIII327e = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327e)
+        }
+        if (iteration >= peopleIIICorridorStartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridor)
+        }
+        if (iteration >= peopleIIICorridorFastStartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridorFast = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridorFast)
+        }
+        if (iteration >= peopleIV426StartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIV426 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV426)
+        }
+        if (iteration >= peopleIV428StartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIV428 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV428)
+        }
+        if (iteration >= peopleIV429StartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIV429 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV429)
+        }
+        if (iteration >= peopleIV430StartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIV430 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV430)
+        }
+        if (iteration >= peopleIV431StartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIV431 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV431)
+        }
+        if (iteration >= peopleIVCorridorStartIteration) {
+          people.notGroupedAvailablePointsWithPeopleNo.peopleIVCorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIVCorridor)
+        }
       }
-      if (iteration >= peopleICorridorStartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleICorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleICorridor)
-      }
-      if (iteration >= peopleII241StartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleII241 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleII241)
-      }
-      if (iteration >= peopleIICorridorStartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIICorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIICorridor)
-      }
-      if (iteration >= peopleIII323StartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIII323 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII323)
-      }
-      if (iteration >= peopleIII324StartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIII324 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII324)
-      }
-      if (iteration >= peopleIII327aStartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIII327a = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327a)
-      }
-      if (iteration >= peopleIII327bStartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIII327b = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327b)
-      }
-      if (iteration >= peopleIII327cStartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIII327c = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327c)
-      }
-      if (iteration >= peopleIII327dStartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIII327d = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327d)
-      }
-      if (iteration >= peopleIII327eStartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIII327e = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIII327e)
-      }
-      if (iteration >= peopleIIICorridorStartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridor)
-      }
-      if (iteration >= peopleIIICorridorFastStartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridorFast = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIIICorridorFast)
-      }
-      if (iteration >= peopleIV426StartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIV426 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV426)
-      }
-      if (iteration >= peopleIV428StartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIV428 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV428)
-      }
-      if (iteration >= peopleIV429StartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIV429 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV429)
-      }
-      if (iteration >= peopleIV430StartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIV430 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV430)
-      }
-      if (iteration >= peopleIV431StartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIV431 = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIV431)
-      }
-      if (iteration >= peopleIVCorridorStartIteration) {
-        people.notGroupedAvailablePointsWithPeopleNo.peopleIVCorridor = placePeopleOnGridLinear(people.notGroupedAvailablePointsWithPeopleNo.peopleIVCorridor)
-      }
-
       if (iteration == openBottomDoorsIterationNo) {
         removeBottomDoor()
       }
