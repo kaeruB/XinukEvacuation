@@ -480,7 +480,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
       println(iteration + ": " + peopleCount + " " + evacuatedCount + " " + (peopleCount + evacuatedCount))
     }
 
-    printPeopleEvacuatedAndOnGridNumber()
+//    printPeopleEvacuatedAndOnGridNumber()
 
     val metrics = EvacuationMetrics(
       evacuatedCounterByDoorId(0),
