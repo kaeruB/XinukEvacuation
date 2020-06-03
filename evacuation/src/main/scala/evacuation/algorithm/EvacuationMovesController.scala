@@ -266,12 +266,12 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
     def movePersonCell(cellY: Int, cellX: Int, cell: PersonCell): Unit = {
       // moving version -- one more change to do! see below
-      val destinations = calculatePossibleDestinations(cell, cellY, cellX, grid) // old grid
-      val destination = selectDestinationCell(destinations, newGrid)
+//      val destinations = calculatePossibleDestinations(cell, cellY, cellX, grid) // old grid
+//      val destination = selectDestinationCell(destinations, newGrid)
 
       // standing version -- one more change to do! see below
-//      val destinations = calculatePossibleDestinations(cell, cellY, cellX, grid) // old grid
-//      val destination = destinations.collectFirstOpt { case (i, j, cellInOldGrid) => (i, j, cellInOldGrid)} // selectDestinationCell(destinations, newGrid) // newGrid
+      val destinations = calculatePossibleDestinations(cell, cellY, cellX, grid) // old grid
+      val destination = destinations.collectFirstOpt { case (i, j, cellInOldGrid) => (i, j, cellInOldGrid)} // selectDestinationCell(destinations, newGrid) // newGrid
 
       destination match {
         case Opt((i, j, PersonAccessible(destination))) => {
@@ -329,10 +329,10 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
             }
             case _ => {
               //standing  version -- one more change to do! see above
-              // newGrid.cells(cellY)(cellX) = cell
+               newGrid.cells(cellY)(cellX) = cell
 
               // moving version  -- one more change to do! see above
-              throw new RuntimeException(s"Person selected inaccessible destination ($i,$j): $inaccessibleDestination")
+//              throw new RuntimeException(s"Person selected inaccessible destination ($i,$j): $inaccessibleDestination")
             }
           }
         case Opt.Empty => {
