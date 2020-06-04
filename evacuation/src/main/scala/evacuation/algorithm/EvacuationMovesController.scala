@@ -251,7 +251,7 @@ final class EvacuationMovesController(bufferZone: TreeSet[(Int, Int)])(implicit 
 
     def simulateEvacuation(): Unit = {
       // version deterministic and random
-      val (dynamicCells, staticCells) = getDynamicAndStaticCellsShuffled() // getDynamicAndStaticCells() getDynamicAndStaticCellsShuffled()
+      val (dynamicCells, staticCells) = getDynamicAndStaticCells() // getDynamicAndStaticCells() getDynamicAndStaticCellsShuffled()
 
       staticCells.foreach({
         case (x, y, Obstacle) => newGrid.cells(x)(y) = Obstacle
